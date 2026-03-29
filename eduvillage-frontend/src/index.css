@@ -1,0 +1,73 @@
+@import "tailwindcss";
+
+@layer base {
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    margin: 0;
+    background-color: #f8f7fb;
+    color: #1f1637;
+    font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+      sans-serif;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  button,
+  input,
+  select,
+  textarea {
+    font: inherit;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    color: #1f1637;
+    letter-spacing: -0.02em;
+  }
+
+  p {
+    color: #6b6680;
+    line-height: 1.6;
+  }
+}
+
+@layer components {
+  .input {
+    @apply w-full rounded-2xl border px-4 py-3 text-sm outline-none transition;
+    border-color: #ddd6f3;
+    background-color: #ffffff;
+    color: #1f1637;
+  }
+
+  .input:focus {
+    border-color: #6d28d9;
+    box-shadow: 0 0 0 3px rgba(109, 40, 217, 0.12);
+  }
+
+  .label {
+    @apply mb-2 block text-sm font-medium;
+    color: #4f4864;
+  }
+
+  .btn-primary {
+    @apply inline-flex items-center justify-center rounded-full px-5 py-3 text-sm font-semibold text-white transition;
+    background-color: #6d28d9;
+  }
+
+  .btn-primary:hover {
+    background-color: #5b21b6;
+  }
+
+  .card {
+    @apply rounded-[28px] border bg-white p-6 shadow-sm;
+    border-color: #ece8f7;
+  }
+}

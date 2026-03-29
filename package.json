@@ -1,0 +1,24 @@
+{
+  "name": "eduvillage",
+  "version": "1.0.0",
+  "description": "EduVillage – Online Learning Platform",
+  "scripts": {
+    "dev": "cd eduvillage-frontend && npm run dev",
+    "dev:frontend": "cd eduvillage-frontend && npm run dev",
+    "dev:backend": "cd backend && npm run start",
+    "build": "cd eduvillage-frontend && npm run build",
+    "start": "cd backend && npm run start"
+  },
+  "keywords": [],
+  "author": "Nikul kumar",
+  "license": "ISC",
+  "devDependencies": {
+    "autoprefixer": "^10.4.23",
+    "postcss": "^8.5.6",
+    "tailwindcss": "^4.1.18"
+  },
+  "dependencies": {
+    "@tailwindcss/postcss": "^4.1.18",
+    "react-hot-toast": "^2.6.0"
+  }
+}

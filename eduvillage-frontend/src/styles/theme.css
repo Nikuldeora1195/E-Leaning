@@ -1,0 +1,17 @@
+/* :root {
+  --bg-main: #020509;
+  --bg-surface: #040A10;
+  --bg-card: #070D15;
+
+  --text-primary: #C9D0DA;
+  --text-secondary: #4A5563;
+
+  --border-subtle: #111827;
+}
+
+body {
+  margin: 0;
+  background-color: var(--bg-main);
+  color: var(--text-primary);
+  font-family: Inter, system-ui, sans-serif;
+} */
