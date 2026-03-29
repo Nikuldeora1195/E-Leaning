@@ -9,6 +9,14 @@ const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const links = useMemo(() => {
+    if (user?.role === "admin") {
+      return [
+        { to: "/admin/dashboard", label: "Dashboard" },
+        { to: "/admin/users", label: "Users" },
+        { to: "/admin/courses", label: "Courses" },
+      ];
+    }
+
     if (user?.role === "teacher") {
       return [
         { to: "/teacher/dashboard", label: "Dashboard" },
@@ -45,7 +53,11 @@ const Navbar = () => {
 
   const isActive = (path) => location.pathname === path;
   const homeRoute =
-    user?.role === "teacher" ? "/teacher/dashboard" : "/dashboard";
+    user?.role === "admin"
+      ? "/admin/dashboard"
+      : user?.role === "teacher"
+      ? "/teacher/dashboard"
+      : "/dashboard";
 
   const closeMenu = () => setIsMobileMenuOpen(false);
 
@@ -63,7 +75,11 @@ const Navbar = () => {
           <div>
             <p className="text-lg font-semibold text-[#1f1637]">EduVillage</p>
             <p className="text-sm text-[#7a7392]">
-              {user?.role === "teacher" ? "Teacher Panel" : "Student Panel"}
+              {user?.role === "admin"
+                ? "Admin Panel"
+                : user?.role === "teacher"
+                ? "Teacher Panel"
+                : "Student Panel"}
             </p>
           </div>
         </div>

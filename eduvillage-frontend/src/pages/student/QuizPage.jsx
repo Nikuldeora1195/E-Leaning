@@ -8,15 +8,24 @@ const QuizPage = () => {
   const { courseId } = useParams();
   const [quiz, setQuiz] = useState(null);
   const [answers, setAnswers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     getQuizByCourse(courseId)
       .then((res) => {
         setQuiz(res.data);
         setAnswers(new Array(res.data.questions.length).fill(null));
+        setError("");
       })
-      .catch(() => {
-        toast.error("No quiz found for this course");
+      .catch((err) => {
+        const message =
+          err.response?.data?.message || "No quiz found for this course";
+        setError(message);
+        toast.error(message);
+      })
+      .finally(() => {
+        setLoading(false);
       });
   }, [courseId]);
 
@@ -27,6 +36,11 @@ const QuizPage = () => {
   };
 
   const handleSubmit = async () => {
+    if (answers.some((answer) => answer === null)) {
+      toast.error("Please answer all questions before submitting");
+      return;
+    }
+
     try {
       const res = await submitQuiz({
         quizId: quiz._id,
@@ -39,11 +53,26 @@ const QuizPage = () => {
     }
   };
 
-  if (!quiz) {
+  if (loading) {
     return (
       <StudentLayout title="">
         <div className="flex h-64 items-center justify-center">
           <div className="h-12 w-12 animate-spin rounded-full border-4 border-[#e7e0fb] border-t-[#6d28d9]"></div>
+        </div>
+      </StudentLayout>
+    );
+  }
+
+  if (!quiz) {
+    return (
+      <StudentLayout title="">
+        <div className="rounded-[28px] border border-dashed border-[#ddd6f3] bg-white px-6 py-16 text-center shadow-sm">
+          <h2 className="text-2xl font-semibold text-[#1f1637]">
+            Quiz not available
+          </h2>
+          <p className="mt-2 text-sm text-[#6b6680]">
+            {error || "This course does not have a quiz yet."}
+          </p>
         </div>
       </StudentLayout>
     );

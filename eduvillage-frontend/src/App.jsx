@@ -246,7 +246,7 @@ import Register from "./pages/auth/Register";
 // Dashboard & Management
 import StudentDashboard from "./pages/dashboard/StudentDashboard";
 import TeacherDashboard from "./pages/dashboard/TeacherDashboard";
-// import AdminDashboard from "./pages/admin/AdminDashboard";
+import AdminDashboard from "./pages/admin/AdminDashboard";
 
 // Course Pages
 import CourseList from "./pages/student/CourseList";
@@ -259,7 +259,7 @@ import CreateCourse from "./pages/teacher/CreateCourse";
 import EditCourse from "./pages/teacher/EditCourse";
 
 // Admin & Teacher Tools
-// import AdminUsers from "./pages/admin/AdminUsers";
+import AdminUsers from "./pages/admin/AdminUsers";
 // import AdminCourses from "./pages/admin/AdminCourses";
 import Students from "./pages/teacher/Students";
 import CreateAnnouncement from "./pages/teacher/CreateAnnouncement";
@@ -302,7 +302,9 @@ function App() {
             <Route path="/courses/:courseId/quiz" element={
               <ProtectedRoute allowedRoles={["student"]}> <QuizPage /> </ProtectedRoute>
             } />
-            <Route path="/certificate/:courseTitle" element={<Certificate />} />
+            <Route path="/certificate/:courseTitle" element={
+              <ProtectedRoute allowedRoles={["student"]}> <Certificate /> </ProtectedRoute>
+            } />
 
             {/* ================= PROTECTED TEACHER ROUTES ================= */}
             <Route path="/teacher/dashboard" element={
@@ -327,6 +329,14 @@ function App() {
               <ProtectedRoute allowedRoles={["teacher", "admin"]}> <CreateAnnouncement /> </ProtectedRoute>
             } />
 
+            {/* ================= ADMIN ROUTES ================= */}
+            <Route path="/admin/dashboard" element={
+              <ProtectedRoute allowedRoles={["admin"]}> <AdminDashboard /> </ProtectedRoute>
+            } />
+            <Route path="/admin/users" element={
+              <ProtectedRoute allowedRoles={["admin"]}> <AdminUsers /> </ProtectedRoute>
+            } />
+
             {/* ================= SHARED ROUTES ================= */}
             <Route path="/announcements" element={
               <ProtectedRoute allowedRoles={["student", "teacher"]}> <Announcements /> </ProtectedRoute>
@@ -342,12 +352,6 @@ function App() {
             } />
 
             {/* ================= ADMIN ROUTES =================
-            <Route path="/admin/dashboard" element={
-              <ProtectedRoute allowedRoles={["admin"]}> <AdminDashboard /> </ProtectedRoute>
-            } />
-            <Route path="/admin/users" element={
-              <ProtectedRoute allowedRoles={["admin"]}> <AdminUsers /> </ProtectedRoute>
-            } />
             <Route path="/admin/courses" element={
               <ProtectedRoute allowedRoles={["admin"]}> <AdminCourses /> </ProtectedRoute>
             } /> */}

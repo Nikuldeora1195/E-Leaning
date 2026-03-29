@@ -1,45 +1,21 @@
-// import axios from "axios";
+import axiosInstance from "./axiosInstance";
 
-// const API = axios.create({
-//   // baseURL: "http://localhost:5000/api",
-//   baseURL:"https://fsd114-nikuldeora1195.onrender.com/api"
-// });
+export const getAdminStats = () => {
+  return axiosInstance.get("/admin/stats");
+};
 
-// // Attach JWT token automatically
-// API.interceptors.request.use((req) => {
-//   const token = localStorage.getItem("token");
-//   if (token) {
-//     req.headers.Authorization = `Bearer ${token}`;
-//   }
-//   return req;
-// });
+export const getAdminUsers = () => {
+  return axiosInstance.get("/admin/users");
+};
 
-// // Get admin stats
-// export const getAdminStats = () => {
-//   return API.get("/admin/stats");
-// };
+export const getAdminCourses = () => {
+  return axiosInstance.get("/admin/courses");
+};
 
-// // Get all users
-// export const getAllUsers = () => {
-//   return API.get("/admin/users");
-// };
+export const updateAdminUserRole = (userId, role) => {
+  return axiosInstance.put(`/admin/users/${userId}/role`, { role });
+};
 
-// // Update user role
-// export const updateUserRole = (userId, role) => {
-//   return API.put(`/admin/users/${userId}/role`, { role });
-// };
-
-// // Update user status
-// export const updateUserStatus = (userId, isActive) => {
-//   return API.put(`/admin/users/${userId}/status`, { isActive });
-// };
-
-// // Get all courses
-// export const getAllCourses = () => {
-//   return API.get("/admin/courses");
-// };
-
-// // Delete course
-// export const deleteCourse = (courseId) => {
-//   return API.delete(`/admin/courses/${courseId}`);
-// };
+export const toggleAdminUserStatus = (userId) => {
+  return axiosInstance.put(`/admin/users/${userId}/status`);
+};
