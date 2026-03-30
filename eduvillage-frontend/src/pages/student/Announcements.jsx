@@ -4,7 +4,7 @@ import usePageTitle from "../../utils/usePageTitle";
 import StudentLayout from "../../components/app/StudentLayout";
 
 const Announcements = () => {
-  usePageTitle("Announcements | EduVillage");
+  usePageTitle("Announcements | LearnMax");
 
   const [announcements, setAnnouncements] = useState([]);
   const [loading, setLoading] = useState(true);

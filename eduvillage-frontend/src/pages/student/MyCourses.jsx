@@ -6,7 +6,7 @@ import StudentLayout from "../../components/app/StudentLayout";
 import { AuthContext } from "../../context/AuthContext";
 
 const MyCourses = () => {
-  usePageTitle("My Learning | EduVillage");
+  usePageTitle("My Learning | LearnMax");
 
   const navigate = useNavigate();
   const { user } = useContext(AuthContext);

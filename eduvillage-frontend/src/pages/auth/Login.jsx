@@ -62,24 +62,26 @@ const Login = () => {
           <div>
             <div className="flex items-center gap-3">
               <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#6d28d9] text-lg font-semibold text-white">
-                E
+                L
               </div>
               <div>
-                <p className="text-xl font-semibold text-[#1f1637]">EduVillage</p>
-                <p className="text-sm text-[#7a7392]">Online learning platform</p>
+                <p className="text-xl font-semibold text-[#1f1637]">LearnMax</p>
+                <p className="text-sm text-[#7a7392]">
+                  E-learning platform by Nikul Kumar
+                </p>
               </div>
             </div>
 
             <div className="mt-16 max-w-md space-y-5">
               <span className="inline-flex rounded-full bg-white px-4 py-1 text-sm font-medium text-[#6d28d9]">
-                Student and Teacher Access
+                Student, Teacher, and Admin Access
               </span>
               <h1 className="text-4xl font-semibold leading-tight text-[#1f1637]">
                 Learn in a simple way with a clean and focused workspace.
               </h1>
               <p className="text-base leading-7 text-[#6b6680]">
                 Continue your courses, manage your content, and keep everything
-                in one place.
+                in one place with LearnMax.
               </p>
             </div>
           </div>
@@ -92,7 +94,7 @@ const Login = () => {
               </p>
             </div>
             <div className="rounded-[24px] bg-white p-5">
-              <p className="text-sm font-medium text-[#7a7392]">For Teachers</p>
+              <p className="text-sm font-medium text-[#7a7392]">For Educators</p>
               <p className="mt-2 text-sm leading-6 text-[#5e5872]">
                 Create courses, manage lessons, and publish content.
               </p>

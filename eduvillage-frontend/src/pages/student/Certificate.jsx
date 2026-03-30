@@ -4,7 +4,7 @@ import { AuthContext } from "../../context/AuthContext";
 import usePageTitle from "../../utils/usePageTitle";
 
 const Certificate = () => {
-  usePageTitle("Course Certificate | EduVillage");
+  usePageTitle("Course Certificate | LearnMax");
 
   const { user } = useContext(AuthContext);
   const { courseTitle } = useParams();
@@ -18,7 +18,7 @@ const Certificate = () => {
           </span>
 
           <h1 className="mt-6 text-4xl font-semibold text-[#1f1637]">
-            EduVillage Certificate
+            LearnMax Certificate
           </h1>
 
           <p className="mt-8 text-lg text-[#6b6680]">This certifies that</p>
@@ -40,7 +40,7 @@ const Certificate = () => {
               <p className="text-xs uppercase tracking-wide text-[#8c84a3]">
                 Issued By
               </p>
-              <p className="mt-2 font-medium text-[#1f1637]">EduVillage</p>
+              <p className="mt-2 font-medium text-[#1f1637]">LearnMax</p>
             </div>
             <div className="rounded-2xl bg-[#faf8ff] p-4 text-left">
               <p className="text-xs uppercase tracking-wide text-[#8c84a3]">

@@ -10,11 +10,13 @@ const Footer = () => {
           <div className="space-y-3">
             <div className="flex items-center gap-3">
               <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-[#6d28d9] text-sm font-semibold text-white">
-                E
+                L
               </div>
               <div>
-                <p className="text-lg font-semibold text-[#1f1637]">EduVillage</p>
-                <p className="text-sm text-[#7a7392]">Simple learning platform</p>
+                <p className="text-lg font-semibold text-[#1f1637]">LearnMax</p>
+                <p className="text-sm text-[#7a7392]">
+                  E-learning platform by Nikul Kumar
+                </p>
               </div>
             </div>
             <p className="max-w-sm text-sm leading-6 text-[#6b6680]">
@@ -58,7 +60,7 @@ const Footer = () => {
         </div>
 
         <div className="mt-8 border-t border-[#f2eefb] pt-5 text-sm text-[#7a7392]">
-          <p>© {currentYear} EduVillage. Built for learning and teaching.</p>
+          <p>© {currentYear} LearnMax. E-learning platform by Nikul Kumar.</p>
         </div>
       </div>
     </footer>

@@ -6,7 +6,7 @@ import * as teacherCourseApi from "../../api/teacherCourseApi";
 import TeacherLayout from "../../components/app/TeacherLayout";
 
 const TeacherDashboard = () => {
-  usePageTitle("Teacher Dashboard | EduVillage");
+  usePageTitle("Teacher Dashboard | LearnMax");
 
   const { user } = useContext(AuthContext);
   const [stats, setStats] = useState({

@@ -4,7 +4,6 @@ const connectDB = require("./config/db");
 const cors = require("cors");
 const path = require("path");
 
-
 dotenv.config();
 connectDB();
 
@@ -14,35 +13,24 @@ const PORT = process.env.PORT || 5000;
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 
-
-app.get("/", (req, res) => {
-  res.send("🚀 EduVillage Backend is Live!");
+app.get("/", (_req, res) => {
+  res.send("LearnMax Backend is Live!");
 });
 
-
-// app.use(
-//   cors({
-//     origin: ["http://localhost:5173", "http://localhost:5174", "*"],
-//     credentials: true,
-//   })
-// );
-
-
-app.use(cors({
-  origin: [
-    "http://localhost:5173",
-    "http://localhost:5174",
-    "http://127.0.0.1:5173",
-    "http://127.0.0.1:5174",
-  ],
-  methods: ["GET", "POST", "PUT", "DELETE"],
-  credentials: true
-}));
+app.use(
+  cors({
+    origin: [
+      "http://localhost:5173",
+      "http://localhost:5174",
+      "http://127.0.0.1:5173",
+      "http://127.0.0.1:5174",
+    ],
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true,
+  })
+);
 
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
-
-
-
 
 const healthRoutes = require("./routes/health.routes");
 const authRoutes = require("./routes/auth.routes");
@@ -58,10 +46,10 @@ const errorHandler = require("./middleware/error.middleware");
 
 app.use("/api/health", healthRoutes);
 app.use("/api/auth", authRoutes);
-app.use("/api/protected",protectedRoutes);
-app.use("/api/role-test",roleTestRoutes);
+app.use("/api/protected", protectedRoutes);
+app.use("/api/role-test", roleTestRoutes);
 app.use("/api/courses", courseRoutes);
-app.use("/api/enroll",enrollmentRoutes);
+app.use("/api/enroll", enrollmentRoutes);
 app.use("/api/notifications", notificationRoutes);
 app.use("/api/content", require("./routes/content.routes"));
 app.use("/api/admin", adminRoutes);

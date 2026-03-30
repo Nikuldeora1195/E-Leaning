@@ -6,7 +6,7 @@ import StudentLayout from "../../components/app/StudentLayout";
 import { getMyEnrollments } from "../../api/enrollmentApi";
 
 const StudentDashboard = () => {
-  usePageTitle("Student Dashboard | EduVillage");
+  usePageTitle("Student Dashboard | LearnMax");
   const { user } = useContext(AuthContext);
 
   const [enrollments, setEnrollments] = useState([]);

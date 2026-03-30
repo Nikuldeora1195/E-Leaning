@@ -9,7 +9,7 @@
   "keywords": [],
   "author": "Nikul kumar",
   "license": "ISC",
-  "description": "EduVillage – Online Learning Platform",
+  "description": "LearnMax - E-learning platform by Nikul Kumar",
   "dependencies": {
     "bcryptjs": "^3.0.3",
     "cors": "^2.8.6",

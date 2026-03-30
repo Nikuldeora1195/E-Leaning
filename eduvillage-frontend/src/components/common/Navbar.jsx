@@ -70,10 +70,10 @@ const Navbar = () => {
       >
         <div className="flex items-center gap-3">
           <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#6d28d9] text-lg font-semibold text-white">
-            E
+            L
           </div>
           <div>
-            <p className="text-lg font-semibold text-[#1f1637]">EduVillage</p>
+            <p className="text-lg font-semibold text-[#1f1637]">LearnMax</p>
             <p className="text-sm text-[#7a7392]">
               {user?.role === "admin"
                 ? "Admin Panel"
@@ -132,7 +132,7 @@ const Navbar = () => {
       <div className="fixed left-0 right-0 top-0 z-40 border-b border-[#ece8f7] bg-white/95 backdrop-blur md:hidden">
         <div className="flex h-16 items-center justify-between px-4">
           <Link to={homeRoute} className="text-lg font-semibold text-[#1f1637]">
-            EduVillage
+            LearnMax
           </Link>
           <button
             type="button"

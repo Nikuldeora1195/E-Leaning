@@ -12,6 +12,10 @@ export const getAdminCourses = () => {
   return axiosInstance.get("/admin/courses");
 };
 
+export const deleteAdminCourse = (courseId) => {
+  return axiosInstance.delete(`/admin/courses/${courseId}`);
+};
+
 export const updateAdminUserRole = (userId, role) => {
   return axiosInstance.put(`/admin/users/${userId}/role`, { role });
 };

@@ -260,7 +260,7 @@ import EditCourse from "./pages/teacher/EditCourse";
 
 // Admin & Teacher Tools
 import AdminUsers from "./pages/admin/AdminUsers";
-// import AdminCourses from "./pages/admin/AdminCourses";
+import AdminCourses from "./pages/admin/AdminCourses";
 import Students from "./pages/teacher/Students";
 import CreateAnnouncement from "./pages/teacher/CreateAnnouncement";
 import Announcements from "./pages/student/Announcements";
@@ -336,6 +336,9 @@ function App() {
             <Route path="/admin/users" element={
               <ProtectedRoute allowedRoles={["admin"]}> <AdminUsers /> </ProtectedRoute>
             } />
+            <Route path="/admin/courses" element={
+              <ProtectedRoute allowedRoles={["admin"]}> <AdminCourses /> </ProtectedRoute>
+            } />
 
             {/* ================= SHARED ROUTES ================= */}
             <Route path="/announcements" element={
@@ -351,10 +354,7 @@ function App() {
               <ProtectedRoute allowedRoles={["teacher"]}> <AddSection /> </ProtectedRoute>
             } />
 
-            {/* ================= ADMIN ROUTES =================
-            <Route path="/admin/courses" element={
-              <ProtectedRoute allowedRoles={["admin"]}> <AdminCourses /> </ProtectedRoute>
-            } /> */}
+            {/* ================= ADMIN ROUTES ================= */}
 
             {/* 404 Route */}
             <Route path="*" element={<NotFound />} />

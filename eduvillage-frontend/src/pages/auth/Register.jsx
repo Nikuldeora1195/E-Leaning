@@ -5,14 +5,13 @@ import usePageTitle from "../../utils/usePageTitle";
 import toast from "react-hot-toast";
 
 const Register = () => {
-  usePageTitle("Register | EduVillage");
+  usePageTitle("Register | LearnMax");
   const navigate = useNavigate();
 
   const [form, setForm] = useState({
     name: "",
     email: "",
     password: "",
-    role: "student",
   });
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -22,7 +21,7 @@ const Register = () => {
     setLoading(true);
 
     try {
-      await registerUser(form);
+      await registerUser({ ...form, role: "student" });
       toast.success("Account created successfully");
       navigate("/login");
     } catch (error) {
@@ -49,7 +48,7 @@ const Register = () => {
                 Start your learning journey
               </h1>
               <p className="text-sm text-[#6b6680]">
-                Create a student or teacher account for development use.
+                Create your student account. Teacher access is managed by admin.
               </p>
             </div>
 
@@ -106,18 +105,10 @@ const Register = () => {
                 </div>
               </div>
 
-              <div>
-                <label className="mb-2 block text-sm font-medium text-[#4f4864]">
-                  Register As
-                </label>
-                <select
-                  className="w-full rounded-2xl border border-[#ddd6f3] px-4 py-3 text-sm text-[#1f1637] outline-none transition focus:border-[#6d28d9]"
-                  value={form.role}
-                  onChange={(e) => setForm({ ...form, role: e.target.value })}
-                >
-                  <option value="student">Student</option>
-                  <option value="teacher">Teacher</option>
-                </select>
+              <div className="rounded-[20px] border border-[#ece8f7] bg-[#faf8ff] px-4 py-3 text-sm text-[#5e5872]">
+                New accounts are created as{" "}
+                <span className="font-semibold text-[#1f1637]">students</span>.
+                Teacher access is assigned later from the admin panel.
               </div>
 
               <button
@@ -142,11 +133,13 @@ const Register = () => {
           <div>
             <div className="flex items-center gap-3">
               <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#6d28d9] text-lg font-semibold text-white">
-                E
+                L
               </div>
               <div>
-                <p className="text-xl font-semibold text-[#1f1637]">EduVillage</p>
-                <p className="text-sm text-[#7a7392]">Clean learning experience</p>
+                <p className="text-xl font-semibold text-[#1f1637]">LearnMax</p>
+                <p className="text-sm text-[#7a7392]">
+                  E-learning platform by Nikul Kumar
+                </p>
               </div>
             </div>
 
@@ -155,11 +148,11 @@ const Register = () => {
                 Simple and Modern
               </span>
               <h2 className="text-4xl font-semibold leading-tight text-[#1f1637]">
-                Build, learn, and manage courses with a cleaner interface.
+                Learn with a simpler, cleaner platform that feels more personal.
               </h2>
               <p className="text-base leading-7 text-[#6b6680]">
-                This version keeps the same working flows while giving the app a
-                fresher and more polished look.
+                LearnMax keeps the same working flows while focusing on a clean
+                and beginner-friendly learning experience.
               </p>
             </div>
           </div>
@@ -172,9 +165,9 @@ const Register = () => {
               </p>
             </div>
             <div className="rounded-[24px] bg-white p-5">
-              <p className="text-sm font-medium text-[#7a7392]">Teacher Mode</p>
+              <p className="text-sm font-medium text-[#7a7392]">Teacher Access</p>
               <p className="mt-2 text-sm leading-6 text-[#5e5872]">
-                Create courses, add lessons, and manage students.
+                Teacher access is enabled by admin after account approval.
               </p>
             </div>
           </div>

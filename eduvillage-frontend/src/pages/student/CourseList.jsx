@@ -5,7 +5,7 @@ import StudentLayout from "../../components/app/StudentLayout";
 import usePageTitle from "../../utils/usePageTitle";
 
 const CourseList = () => {
-  usePageTitle("Browse Courses | EduVillage");
+  usePageTitle("Browse Courses | LearnMax");
 
   const [courses, setCourses] = useState([]);
   const [allCourses, setAllCourses] = useState([]);

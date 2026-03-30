@@ -1,310 +1,228 @@
-// import { useEffect, useState } from "react";
-// import { getAllCourses, deleteCourse } from "../../api/adminApi";
-// // import AdminSidebar from "../../components/admin/AdminSidebar";
+import { useEffect, useMemo, useState } from "react";
+import toast from "react-hot-toast";
+import AdminLayout from "../../components/app/AdminLayout";
+import { deleteAdminCourse, getAdminCourses } from "../../api/adminApi";
 
-// import toast from "react-hot-toast";
+const AdminCourses = () => {
+  const [courses, setCourses] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [filter, setFilter] = useState("all");
+  const [search, setSearch] = useState("");
+  const [deletingId, setDeletingId] = useState("");
 
-// const AdminCourses = () => {
-//   const [courses, setCourses] = useState([]);
-//   const [loading, setLoading] = useState(true);
-//   const [filter, setFilter] = useState("all"); // all, published, draft
-//   const [searchQuery, setSearchQuery] = useState("");
-//   const [deleteModal, setDeleteModal] = useState({ show: false, courseId: null, courseName: "" });
+  const loadCourses = async () => {
+    try {
+      setLoading(true);
+      const res = await getAdminCourses();
+      setCourses(res.data);
+    } catch (error) {
+      console.error("Failed to load courses:", error);
+      toast.error(error.response?.data?.message || "Failed to load courses");
+    } finally {
+      setLoading(false);
+    }
+  };
 
-//   useEffect(() => {
-//     loadCourses();
-//   }, []);
+  useEffect(() => {
+    loadCourses();
+  }, []);
 
-//   const loadCourses = async () => {
-//     try {
-//       const response = await getAllCourses();
-//       setCourses(response.data);
-//     } catch (error) {
-//       console.error("Failed to load courses:", error);
-//       toast.error("Failed to load courses");
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
+  const filteredCourses = useMemo(() => {
+    return courses.filter((course) => {
+      const matchesFilter =
+        filter === "all" ||
+        (filter === "published" && course.isPublished) ||
+        (filter === "draft" && !course.isPublished);
 
-//   const handleDeleteClick = (course) => {
-//     setDeleteModal({
-//       show: true,
-//       courseId: course._id,
-//       courseName: course.title,
-//     });
-//   };
+      const query = search.toLowerCase();
+      const matchesSearch =
+        course.title?.toLowerCase().includes(query) ||
+        course.createdBy?.name?.toLowerCase().includes(query) ||
+        course.createdBy?.email?.toLowerCase().includes(query);
 
-//   const handleDeleteConfirm = async () => {
-//     const toastId = toast.loading("Deleting course...");
-//     try {
-//       await deleteCourse(deleteModal.courseId);
-//       toast.success("Course deleted successfully! 🗑️", { id: toastId });
-//       setDeleteModal({ show: false, courseId: null, courseName: "" });
-//       loadCourses(); // Reload courses
-//     } catch (error) {
-//       console.error("Failed to delete course:", error);
-//       toast.error("Failed to delete course", { id: toastId });
-//     }
-//   };
+      return matchesFilter && matchesSearch;
+    });
+  }, [courses, filter, search]);
 
-//   const handleDeleteCancel = () => {
-//     setDeleteModal({ show: false, courseId: null, courseName: "" });
-//   };
+  const stats = {
+    total: courses.length,
+    published: courses.filter((course) => course.isPublished).length,
+    drafts: courses.filter((course) => !course.isPublished).length,
+  };
 
-//   // Filter courses
-//   const filteredCourses = courses.filter((course) => {
-//     const matchesFilter =
-//       filter === "all" ||
-//       (filter === "published" && course.isPublished) ||
-//       (filter === "draft" && !course.isPublished);
+  const filters = [
+    { key: "all", label: `All (${stats.total})` },
+    { key: "published", label: `Published (${stats.published})` },
+    { key: "draft", label: `Drafts (${stats.drafts})` },
+  ];
 
-//     const matchesSearch =
-//       course.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-//       course.createdBy?.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-//       course.createdBy?.email?.toLowerCase().includes(searchQuery.toLowerCase());
+  const handleDeleteCourse = async (courseId, title) => {
+    const confirmed = window.confirm(
+      `Delete "${title}"? This action cannot be undone.`
+    );
 
-//     return matchesFilter && matchesSearch;
-//   });
+    if (!confirmed) return;
 
-//   // Calculate stats
-//   const totalCourses = courses.length;
-//   const publishedCourses = courses.filter((c) => c.isPublished).length;
-//   const draftCourses = courses.filter((c) => !c.isPublished).length;
+    const toastId = toast.loading("Deleting course...");
+    setDeletingId(courseId);
 
-//   if (loading) {
-//     return (
-//       <div className="min-h-screen bg-[#F4F7FA] flex">
-//         {/* <AdminSidebar /> */}
-//         <div className="flex-1 flex items-center justify-center">
-//           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#1B9AAA]"></div>
-//         </div>
-//       </div>
-//     );
-//   }
+    try {
+      await deleteAdminCourse(courseId);
+      setCourses((prev) => prev.filter((course) => course._id !== courseId));
+      toast.success("Course deleted", { id: toastId });
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Failed to delete course", {
+        id: toastId,
+      });
+    } finally {
+      setDeletingId("");
+    }
+  };
 
-//   return (
-//     <div className="min-h-screen bg-[#F4F7FA] flex">
-//       {/* <AdminSidebar /> */}
+  if (loading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-[#f8f7fb]">
+        <div className="h-12 w-12 animate-spin rounded-full border-4 border-[#e7e0fb] border-t-[#6d28d9]"></div>
+      </div>
+    );
+  }
 
-//       {/* Main Content */}
-//       <main className="flex-1 p-8">
-//         {/* Header */}
-//         <div className="mb-8">
-//           <h1 className="text-4xl font-bold text-[#142C52] mb-2">Course Management</h1>
-//           <p className="text-[#071426] opacity-70 text-lg">
-//             Monitor and manage all courses on the platform
-//           </p>
-//         </div>
+  return (
+    <AdminLayout title="">
+      <div className="space-y-8">
+        <section className="rounded-[28px] border border-[#ece8f7] bg-white px-6 py-8 shadow-sm sm:px-8">
+          <div className="space-y-3">
+            <span className="inline-flex rounded-full bg-[#f4f0ff] px-4 py-1 text-sm font-medium text-[#6d28d9]">
+              Admin Courses
+            </span>
+            <h1 className="text-3xl font-semibold text-[#1f1637] sm:text-4xl">
+              Review and manage all courses
+            </h1>
+            <p className="max-w-2xl text-base text-[#6b6680]">
+              Monitor course records, review who created them, and remove test or unwanted content.
+            </p>
+          </div>
+        </section>
 
-//         {/* Stats Cards */}
-//         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-//           <div className="bg-white rounded-xl p-6 border border-[#CCE7EC] shadow-md">
-//             <div className="flex items-center justify-between mb-4">
-//               <div className="bg-linear-to-br from-[#CCE7EC] to-[#4C97A8] p-3 rounded-full">
-//                 <span className="text-3xl">📚</span>
-//               </div>
-//             </div>
-//             <h3 className="text-[#071426] opacity-70 text-sm mb-1">Total Courses</h3>
-//             <p className="text-3xl font-bold text-[#142C52]">{totalCourses}</p>
-//           </div>
+        <section className="grid gap-4 md:grid-cols-3">
+          <div className="rounded-[24px] border border-[#ece8f7] bg-white p-6 shadow-sm">
+            <p className="text-sm font-medium text-[#7a7392]">Total Courses</p>
+            <p className="mt-3 text-4xl font-semibold text-[#1f1637]">{stats.total}</p>
+          </div>
+          <div className="rounded-[24px] border border-[#ece8f7] bg-white p-6 shadow-sm">
+            <p className="text-sm font-medium text-[#7a7392]">Published</p>
+            <p className="mt-3 text-4xl font-semibold text-[#1f1637]">{stats.published}</p>
+          </div>
+          <div className="rounded-[24px] border border-[#ece8f7] bg-white p-6 shadow-sm">
+            <p className="text-sm font-medium text-[#7a7392]">Drafts</p>
+            <p className="mt-3 text-4xl font-semibold text-[#1f1637]">{stats.drafts}</p>
+          </div>
+        </section>
 
-//           <div className="bg-white rounded-xl p-6 border border-[#CCE7EC] shadow-md">
-//             <div className="flex items-center justify-between mb-4">
-//               <div className="bg-linear-to-br from-[#22C55E]/20 to-[#178740]/20 p-3 rounded-full">
-//                 <span className="text-3xl">✅</span>
-//               </div>
-//             </div>
-//             <h3 className="text-[#071426] opacity-70 text-sm mb-1">Published</h3>
-//             <p className="text-3xl font-bold text-[#142C52]">{publishedCourses}</p>
-//           </div>
+        <section className="rounded-[28px] border border-[#ece8f7] bg-white p-6 shadow-sm">
+          <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+            <div className="flex flex-wrap gap-3">
+              {filters.map((item) => (
+                <button
+                  key={item.key}
+                  onClick={() => setFilter(item.key)}
+                  className={`rounded-full px-5 py-2.5 text-sm font-medium transition ${
+                    filter === item.key
+                      ? "bg-[#6d28d9] text-white"
+                      : "border border-[#ddd6f3] bg-white text-[#4f4864] hover:bg-[#f7f3ff]"
+                  }`}
+                >
+                  {item.label}
+                </button>
+              ))}
+            </div>
 
-//           <div className="bg-white rounded-xl p-6 border border-[#CCE7EC] shadow-md">
-//             <div className="flex items-center justify-between mb-4">
-//               <div className="bg-linear-to-br from-[#EF4444]/20 to-[#EB1414]/20 p-3 rounded-full">
-//                 <span className="text-3xl">📝</span>
-//               </div>
-//             </div>
-//             <h3 className="text-[#071426] opacity-70 text-sm mb-1">Draft</h3>
-//             <p className="text-3xl font-bold text-[#142C52]">{draftCourses}</p>
-//           </div>
-//         </div>
+            <input
+              type="text"
+              placeholder="Search by course or teacher"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="w-full rounded-2xl border border-[#ddd6f3] px-4 py-3 text-sm text-[#1f1637] outline-none transition focus:border-[#6d28d9] md:w-72"
+            />
+          </div>
+        </section>
 
-//         {/* Filters and Search */}
-//         <div className="bg-white rounded-xl border border-[#CCE7EC] shadow-lg p-6 mb-6">
-//           <div className="flex flex-col md:flex-row gap-4 justify-between items-start md:items-center">
-//             {/* Filter Tabs */}
-//             <div className="flex gap-2 flex-wrap">
-//               <button
-//                 onClick={() => setFilter("all")}
-//                 className={`px-4 py-2 rounded-lg font-medium transition-all ${
-//                   filter === "all"
-//                     ? "bg-linear-to-r from-[#1B9AAA] to-[#16808D] text-white shadow-md"
-//                     : "bg-[#F4F7FA] text-[#071426] hover:bg-[#CCE7EC]"
-//                 }`}
-//               >
-//                 All ({totalCourses})
-//               </button>
-//               <button
-//                 onClick={() => setFilter("published")}
-//                 className={`px-4 py-2 rounded-lg font-medium transition-all ${
-//                   filter === "published"
-//                     ? "bg-linear-to-r from-[#1B9AAA] to-[#16808D] text-white shadow-md"
-//                     : "bg-[#F4F7FA] text-[#071426] hover:bg-[#CCE7EC]"
-//                 }`}
-//               >
-//                 Published ({publishedCourses})
-//               </button>
-//               <button
-//                 onClick={() => setFilter("draft")}
-//                 className={`px-4 py-2 rounded-lg font-medium transition-all ${
-//                   filter === "draft"
-//                     ? "bg-linear-to-r from-[#1B9AAA] to-[#16808D] text-white shadow-md"
-//                     : "bg-[#F4F7FA] text-[#071426] hover:bg-[#CCE7EC]"
-//                 }`}
-//               >
-//                 Draft ({draftCourses})
-//               </button>
-//             </div>
+        {filteredCourses.length === 0 ? (
+          <section className="rounded-[28px] border border-dashed border-[#ddd6f3] bg-white px-6 py-16 text-center shadow-sm">
+            <h2 className="text-2xl font-semibold text-[#1f1637]">
+              No courses found
+            </h2>
+            <p className="mt-2 text-sm text-[#6b6680]">
+              Try another filter or search term.
+            </p>
+          </section>
+        ) : (
+          <section className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+            {filteredCourses.map((course) => (
+              <article
+                key={course._id}
+                className="rounded-[28px] border border-[#ece8f7] bg-white shadow-sm"
+              >
+                <div className="border-b border-[#f1edfb] bg-[#faf8ff] p-6">
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="space-y-2">
+                      <span
+                        className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold ${
+                          course.isPublished
+                            ? "bg-[#e8fbef] text-[#18794e]"
+                            : "bg-[#f4f0ff] text-[#6d28d9]"
+                        }`}
+                      >
+                        {course.isPublished ? "Published" : "Draft"}
+                      </span>
+                      <h2 className="text-xl font-semibold text-[#1f1637]">
+                        {course.title}
+                      </h2>
+                    </div>
+                  </div>
 
-//             {/* Search */}
-//             <div className="relative w-full md:w-64">
-//               <input
-//                 type="text"
-//                 placeholder="Search courses or instructors..."
-//                 value={searchQuery}
-//                 onChange={(e) => setSearchQuery(e.target.value)}
-//                 className="w-full border-2 border-[#CCE7EC] rounded-lg px-4 py-2 pl-10 text-sm focus:outline-none focus:border-[#1B9AAA] transition-colors"
-//               />
-//               <span className="absolute left-3 top-2.5 text-gray-400">🔍</span>
-//             </div>
-//           </div>
-//         </div>
+                  <p className="mt-3 text-sm leading-6 text-[#6b6680]">
+                    {course.description}
+                  </p>
+                </div>
 
-//         {/* Courses Grid */}
-//         {filteredCourses.length === 0 ? (
-//           <div className="bg-white rounded-xl border border-[#CCE7EC] shadow-lg p-12 text-center">
-//             <div className="text-6xl mb-4">📚</div>
-//             <h3 className="text-2xl font-bold text-[#142C52] mb-2">No Courses Found</h3>
-//             <p className="text-[#071426] opacity-70">
-//               {searchQuery
-//                 ? "Try adjusting your search query"
-//                 : "No courses match the selected filter"}
-//             </p>
-//           </div>
-//         ) : (
-//           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-//             {filteredCourses.map((course) => (
-//               <div
-//                 key={course._id}
-//                 className="bg-white rounded-xl border border-[#CCE7EC] hover:border-[#1B9AAA] hover:shadow-2xl transition-all duration-300 overflow-hidden transform hover:-translate-y-2"
-//               >
-//                 {/* Course Header */}
-//                 <div className="h-40 bg-linear-to-br from-[#CCE7EC] via-[#4C97A8] to-[#02394A] relative overflow-hidden">
-//                   <div className="absolute inset-0 flex items-center justify-center">
-//                     <span className="text-6xl opacity-80">
-//                       {course.isPublished ? "🎓" : "📝"}
-//                     </span>
-//                   </div>
+                <div className="space-y-4 p-6">
+                  <div className="rounded-[22px] bg-[#faf8ff] p-4">
+                    <p className="text-xs uppercase tracking-wide text-[#8c84a3]">
+                      Created By
+                    </p>
+                    <p className="mt-2 font-medium text-[#1f1637]">
+                      {course.createdBy?.name || "Unknown"}
+                    </p>
+                    <p className="mt-1 text-sm text-[#6b6680]">
+                      {course.createdBy?.email || "No email"}
+                    </p>
+                  </div>
 
-//                   {/* Status Badge */}
-//                   <div className="absolute top-3 right-3">
-//                     <span
-//                       className={`px-3 py-1 rounded-full text-xs font-bold shadow-lg ${
-//                         course.isPublished
-//                           ? "bg-linear-to-r from-[#22C55E] to-[#178740] text-white"
-//                           : "bg-white text-[#EF4444] border-2 border-[#EF4444]"
-//                       }`}
-//                     >
-//                       {course.isPublished ? "✓ Published" : "Draft"}
-//                     </span>
-//                   </div>
-//                 </div>
+                  <div className="rounded-[22px] bg-[#faf8ff] p-4">
+                    <p className="text-xs uppercase tracking-wide text-[#8c84a3]">
+                      Course ID
+                    </p>
+                    <p className="mt-2 break-all text-sm font-medium text-[#1f1637]">
+                      {course._id}
+                    </p>
+                  </div>
 
-//                 {/* Course Content */}
-//                 <div className="p-6 space-y-4">
-//                   {/* Title */}
-//                   <h3 className="text-xl font-bold text-[#142C52] line-clamp-2 min-h-14">
-//                     {course.title}
-//                   </h3>
+                  <button
+                    onClick={() => handleDeleteCourse(course._id, course.title)}
+                    disabled={deletingId === course._id}
+                    className="w-full rounded-full border border-[#f2c5c5] px-5 py-3 text-sm font-semibold text-[#b42318] transition hover:bg-[#fff5f5] disabled:opacity-60"
+                  >
+                    {deletingId === course._id ? "Deleting..." : "Delete Course"}
+                  </button>
+                </div>
+              </article>
+            ))}
+          </section>
+        )}
+      </div>
+    </AdminLayout>
+  );
+};
 
-//                   {/* Instructor Info */}
-//                   <div className="flex items-center gap-3 pt-2 border-t border-[#CCE7EC]">
-//                     <div className="w-10 h-10 bg-linear-to-br from-[#1B9AAA] to-[#16808D] rounded-full flex items-center justify-center shrink-0">
-//                       <span className="text-white font-bold text-sm">
-//                         {course.createdBy?.name?.charAt(0).toUpperCase() || "T"}
-//                       </span>
-//                     </div>
-//                     <div className="flex-1 min-w-0">
-//                       <p className="font-medium text-[#142C52] text-sm truncate">
-//                         {course.createdBy?.name || "Unknown"}
-//                       </p>
-//                       <p className="text-xs text-[#071426] opacity-60 truncate">
-//                         {course.createdBy?.email || "No email"}
-//                       </p>
-//                     </div>
-//                   </div>
-
-//                   {/* Course ID */}
-//                   <div className="bg-[#F4F7FA] rounded-lg p-2 border border-[#CCE7EC]">
-//                     <p className="text-xs text-[#071426] opacity-60">
-//                       Course ID: <span className="font-mono">{course._id.slice(-8)}</span>
-//                     </p>
-//                   </div>
-
-//                   {/* Delete Button */}
-//                   <button
-//                     onClick={() => handleDeleteClick(course)}
-//                     className="w-full bg-[#EF4444]/10 text-[#EF4444] py-2.5 rounded-lg font-semibold hover:bg-[#EF4444] hover:text-white transition-all border-2 border-[#EF4444] flex items-center justify-center gap-2"
-//                   >
-//                     <span>🗑️</span>
-//                     <span>Delete Course</span>
-//                   </button>
-//                 </div>
-//               </div>
-//             ))}
-//           </div>
-//         )}
-//       </main>
-
-//       {/* Delete Confirmation Modal */}
-//       {deleteModal.show && (
-//         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-//           <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full p-8 transform transition-all">
-//             {/* Modal Icon */}
-//             <div className="w-16 h-16 bg-[#EF4444]/10 rounded-full flex items-center justify-center mx-auto mb-4">
-//               <span className="text-4xl">⚠️</span>
-//             </div>
-
-//             {/* Modal Content */}
-//             <h3 className="text-2xl font-bold text-[#142C52] text-center mb-2">
-//               Delete Course?
-//             </h3>
-//             <p className="text-[#071426] opacity-70 text-center mb-6">
-//               Are you sure you want to delete <strong>"{deleteModal.courseName}"</strong>?
-//               This action cannot be undone.
-//             </p>
-
-//             {/* Modal Buttons */}
-//             <div className="flex gap-3">
-//               <button
-//                 onClick={handleDeleteCancel}
-//                 className="flex-1 px-6 py-3 rounded-lg font-semibold border-2 border-[#CCE7EC] text-[#071426] hover:bg-[#F4F7FA] transition-colors"
-//               >
-//                 Cancel
-//               </button>
-//               <button
-//                 onClick={handleDeleteConfirm}
-//                 className="flex-1 px-6 py-3 rounded-lg font-semibold bg-linear-to-r from-[#EF4444] to-[#EB1414] text-white hover:shadow-lg transition-all"
-//               >
-//                 Delete
-//               </button>
-//             </div>
-//           </div>
-//         </div>
-//       )}
-//     </div>
-//   );
-// };
-
-// export default AdminCourses;
+export default AdminCourses;

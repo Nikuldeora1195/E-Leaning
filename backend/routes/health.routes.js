@@ -1,10 +1,10 @@
 const express = require("express");
 const router = express.Router();
 
-router.get("/", (req, res) => {
+router.get("/", (_req, res) => {
   res.json({
     status: "OK",
-    message: "EduVillage backend is healthy"
+    message: "LearnMax backend is healthy",
   });
 });
 
