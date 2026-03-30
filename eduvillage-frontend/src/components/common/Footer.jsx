@@ -9,9 +9,11 @@ const Footer = () => {
         <div className="grid gap-8 md:grid-cols-3">
           <div className="space-y-3">
             <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-[#6d28d9] text-sm font-semibold text-white">
-                L
-              </div>
+              <img
+                src="/learnmax.png"
+                alt="LearnMax logo"
+                className="h-10 w-10 rounded-2xl object-cover"
+              />
               <div>
                 <p className="text-lg font-semibold text-[#1f1637]">LearnMax</p>
                 <p className="text-sm text-[#7a7392]">
@@ -52,15 +54,13 @@ const Footer = () => {
               <Link to="/register" className="hover:text-[#6d28d9]">
                 Register
               </Link>
-              <Link to="/privacy" className="hover:text-[#6d28d9]">
-                Privacy
-              </Link>
+              <p>Teacher access is managed by admin approval.</p>
             </div>
           </div>
         </div>
 
         <div className="mt-8 border-t border-[#f2eefb] pt-5 text-sm text-[#7a7392]">
-          <p>© {currentYear} LearnMax. E-learning platform by Nikul Kumar.</p>
+          <p>&copy; {currentYear} LearnMax. E-learning platform by Nikul Kumar.</p>
         </div>
       </div>
     </footer>

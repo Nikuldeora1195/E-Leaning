@@ -16,7 +16,7 @@ const StudentDashboard = () => {
   useEffect(() => {
     getMyEnrollments()
       .then((res) => {
-        setEnrollments(res.data);
+        setEnrollments(res.data.filter((item) => item.course));
         setError("");
         setLoading(false);
       })
@@ -45,7 +45,7 @@ const StudentDashboard = () => {
         )
       : 0;
 
-  const recentCourses = enrollments.slice(0, 3);
+  const recentCourses = enrollments.filter((item) => item.course).slice(0, 3);
 
   const stats = [
     {

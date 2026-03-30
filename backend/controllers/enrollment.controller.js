@@ -3,6 +3,30 @@ const Course = require("../models/Course");
 const Lesson = require("../models/Lesson");
 const Section = require("../models/Section");
 
+const recalculateEnrollmentProgress = async (enrollment, courseId) => {
+  const sections = await Section.find({ course: courseId }).select("_id");
+  const sectionIds = sections.map((section) => section._id);
+
+  const lessons = await Lesson.find({
+    section: { $in: sectionIds },
+  }).select("_id");
+
+  const validLessonIds = new Set(lessons.map((lesson) => lesson._id.toString()));
+
+  enrollment.completedLessons = enrollment.completedLessons.filter((lessonId) =>
+    validLessonIds.has(lessonId.toString())
+  );
+
+  const totalLessons = lessons.length;
+  const completedCount = enrollment.completedLessons.length;
+  const rawProgress =
+    totalLessons > 0 ? Math.round((completedCount / totalLessons) * 100) : 0;
+
+  enrollment.progress = Math.min(100, Math.max(0, rawProgress));
+  enrollment.isCompleted = totalLessons > 0 && enrollment.progress >= 100;
+  enrollment.completedAt = enrollment.isCompleted ? enrollment.completedAt || new Date() : null;
+};
+
 // ---------------------- COMPLETE LESSON ----------------------
 const completeLesson = async (req, res) => {
   try {
@@ -32,21 +56,7 @@ const completeLesson = async (req, res) => {
       enrollment.completedLessons.push(lessonId);
     }
 
-    const sections = await Section.find({ course: section.course });
-    const sectionIds = sections.map((s) => s._id);
-
-    const totalLessons = await Lesson.countDocuments({
-      section: { $in: sectionIds },
-    });
-
-    enrollment.progress = Math.round(
-      (enrollment.completedLessons.length / totalLessons) * 100
-    );
-
-    if (enrollment.progress === 100) {
-      enrollment.isCompleted = true;
-      enrollment.completedAt = new Date();
-    }
+    await recalculateEnrollmentProgress(enrollment, section.course);
 
     await enrollment.save();
 
@@ -99,8 +109,27 @@ const getMyCourses = async (req, res) => {
       student: req.user.id,
     }).populate("course", "title description");
 
-    res.json(enrollments);
+    const validEnrollments = [];
+    const orphanEnrollmentIds = [];
+
+    for (const enrollment of enrollments) {
+      if (!enrollment.course) {
+        orphanEnrollmentIds.push(enrollment._id);
+        continue;
+      }
+
+      await recalculateEnrollmentProgress(enrollment, enrollment.course._id);
+      await enrollment.save();
+      validEnrollments.push(enrollment);
+    }
+
+    if (orphanEnrollmentIds.length > 0) {
+      await Enrollment.deleteMany({ _id: { $in: orphanEnrollmentIds } });
+    }
+
+    res.json(validEnrollments);
   } catch (error) {
+    console.error("Get my courses error:", error);
     res.status(500).json({ message: error.message });
   }
 };
@@ -121,12 +150,9 @@ const updateProgress = async (req, res) => {
       return res.status(403).json({ message: "Unauthorized" });
     }
 
-    enrollment.progress = progress;
-
-    if (progress === 100) {
-      enrollment.isCompleted = true;
-      enrollment.completedAt = new Date();
-    }
+    enrollment.progress = Math.min(100, Math.max(0, Number(progress) || 0));
+    enrollment.isCompleted = enrollment.progress >= 100;
+    enrollment.completedAt = enrollment.isCompleted ? enrollment.completedAt || new Date() : null;
 
     await enrollment.save();
     res.json(enrollment);

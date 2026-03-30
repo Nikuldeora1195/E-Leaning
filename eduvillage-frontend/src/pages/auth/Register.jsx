@@ -150,9 +150,11 @@ const Register = () => {
         <section className="hidden bg-[#faf8ff] p-10 lg:flex lg:flex-col lg:justify-between">
           <div>
             <div className="flex items-center gap-3">
-              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#6d28d9] text-lg font-semibold text-white">
-                L
-              </div>
+              <img
+                src="/learnmax.png"
+                alt="LearnMax logo"
+                className="h-12 w-12 rounded-2xl object-cover"
+              />
               <div>
                 <p className="text-xl font-semibold text-[#1f1637]">LearnMax</p>
                 <p className="text-sm text-[#7a7392]">

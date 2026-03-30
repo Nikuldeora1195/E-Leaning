@@ -61,9 +61,11 @@ const Login = () => {
         <section className="hidden bg-[#faf8ff] p-10 lg:flex lg:flex-col lg:justify-between">
           <div>
             <div className="flex items-center gap-3">
-              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#6d28d9] text-lg font-semibold text-white">
-                L
-              </div>
+              <img
+                src="/learnmax.png"
+                alt="LearnMax logo"
+                className="h-12 w-12 rounded-2xl object-cover"
+              />
               <div>
                 <p className="text-xl font-semibold text-[#1f1637]">LearnMax</p>
                 <p className="text-sm text-[#7a7392]">
@@ -105,6 +107,11 @@ const Login = () => {
         <section className="flex items-center justify-center p-6 sm:p-10">
           <div className="w-full max-w-md">
             <div className="mb-8 space-y-3 text-center lg:text-left">
+              <img
+                src="/learnmax.png"
+                alt="LearnMax logo"
+                className="mx-auto h-14 w-14 rounded-3xl object-cover lg:mx-0"
+              />
               <span className="inline-flex rounded-full bg-[#f4f0ff] px-4 py-1 text-sm font-medium text-[#6d28d9]">
                 Welcome Back
               </span>
@@ -136,12 +143,9 @@ const Login = () => {
                   <label className="block text-sm font-medium text-[#4f4864]">
                     Password
                   </label>
-                  <Link
-                    to="/forgot-password"
-                    className="text-sm font-medium text-[#6d28d9] hover:underline"
-                  >
-                    Forgot password?
-                  </Link>
+                  <span className="text-sm text-[#7a7392]">
+                    Use your registered password
+                  </span>
                 </div>
 
                 <div className="relative">

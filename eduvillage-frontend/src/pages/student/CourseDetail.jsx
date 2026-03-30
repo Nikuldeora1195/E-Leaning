@@ -46,7 +46,7 @@ const CourseDetail = () => {
         if (user?.role === "student") {
           const enrollRes = await getMyEnrollments();
           const currentEnrollment = enrollRes.data.find(
-            (item) => item.course?._id === id
+            (item) => item.course && item.course._id === id
           );
           setEnrolled(Boolean(currentEnrollment));
           setCanReview(Boolean(currentEnrollment?.isCompleted));

@@ -20,7 +20,7 @@ const MyCourses = () => {
       setLoading(true);
       setError("");
       const res = await getMyEnrollments();
-      setCourses(res.data);
+      setCourses(res.data.filter((item) => item.course));
     } catch (err) {
       if (err.response?.status === 401) {
         setError("Your session expired. Please log in again.");

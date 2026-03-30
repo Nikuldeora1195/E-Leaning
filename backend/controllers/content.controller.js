@@ -1,6 +1,7 @@
 const Course = require("../models/Course");
 const Section = require("../models/Section");
 const Lesson = require("../models/Lesson");
+const Enrollment = require("../models/Enrollment");
 
 /**
  * @desc Create a new section inside a course
@@ -167,6 +168,14 @@ const deleteSection = async (req, res) => {
       return res.status(403).json({ message: "Not allowed to modify this course" });
     }
 
+    const lessons = await Lesson.find({ section: section._id }).select("_id");
+    const lessonIds = lessons.map((lesson) => lesson._id);
+
+    await Enrollment.updateMany(
+      { course: section.course._id },
+      { $pull: { completedLessons: { $in: lessonIds } } }
+    );
+
     await Lesson.deleteMany({ section: section._id });
     await section.deleteOne();
 
@@ -220,6 +229,11 @@ const deleteLesson = async (req, res) => {
     if (lesson.section.course.createdBy.toString() !== req.user.id) {
       return res.status(403).json({ message: "Not allowed to modify this course" });
     }
+
+    await Enrollment.updateMany(
+      { course: lesson.section.course._id },
+      { $pull: { completedLessons: lesson._id } }
+    );
 
     await lesson.deleteOne();
 
