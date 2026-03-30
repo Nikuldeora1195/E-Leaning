@@ -12,7 +12,7 @@ EduVillage/
 
 ├── backend/
 
-├── eduvillage-frontend/
+├── frontend/
 
 ├── README.md
 
@@ -118,7 +118,7 @@ backend/
 
 \\# 🎨 Frontend Structure
 
-eduvillage-frontend/
+frontend/
 
 │
 

@@ -1,4 +1,4 @@
-// const { completeLesson } = require("../../eduvillage-frontend/src/api/courseApi");
+// const { completeLesson } = require("../../frontend/src/api/courseApi");
 const Course = require("../models/Course");
 const Enrollment = require("../models/Enrollment");
 const Review = require("../models/Review");

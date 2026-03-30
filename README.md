@@ -54,7 +54,7 @@ E-Leaning/
     models/
     routes/
     uploads/
-  eduvillage-frontend/
+  frontend/
     public/
     src/
       api/
@@ -96,7 +96,7 @@ npm start
 ### 3. Frontend setup
 
 ```bash
-cd ../eduvillage-frontend
+cd ../frontend
 npm install
 npm run dev
 ```
@@ -153,14 +153,40 @@ http://localhost:5000
 - `/api/admin`
 - `/api/certificates`
 
+## Deployment Plan
+
+### Frontend on Vercel
+
+Deploy the `frontend` folder to Vercel.
+
+Set:
+
+```env
+VITE_API_BASE_URL=https://your-render-backend-url.onrender.com/api
+```
+
+### Backend on Render
+
+Deploy the `backend` folder to Render as a web service.
+
+Set:
+
+```env
+PORT=5000
+MONGO_URI=your_mongodb_connection_string
+JWT_SECRET=your_long_random_secret
+FRONTEND_URL=https://your-vercel-domain.vercel.app
+```
+
 ## Deployment Checklist
 
-- Set production `MONGO_URI`
-- Set production `JWT_SECRET`
-- Configure backend CORS for deployed frontend URL
-- Add production frontend API base URL if needed
-- Make sure `uploads/` handling is suitable for deployment
-- Test student, teacher, and admin flows once after deployment
+- Deploy backend first on Render
+- Copy the Render backend URL
+- Add `VITE_API_BASE_URL` in Vercel
+- Deploy frontend on Vercel
+- Update backend `FRONTEND_URL` with final Vercel domain
+- Redeploy backend once
+- Test student, teacher, and admin flows after deployment
 
 ## Final Note
 

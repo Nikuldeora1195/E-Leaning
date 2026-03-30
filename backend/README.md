@@ -11,35 +11,54 @@ Backend API for the LearnMax e-learning platform.
 - JWT authentication
 - Multer for local media upload
 
-## Run Locally
+## Local Setup
 
 ```bash
 cd backend
 npm install
 ```
 
-Create `.env` from `.env.example` and add:
+Create `.env` from `.env.example` and set:
 
 ```env
 PORT=5000
 MONGO_URI=your_mongodb_connection_string
-JWT_SECRET=your_secret_key
+JWT_SECRET=your_long_random_secret
+FRONTEND_URL=http://localhost:5173
 ```
 
-Start the server:
+Start server:
 
 ```bash
 npm start
 ```
 
-API base URL:
+## Local URLs
 
-```text
-http://localhost:5000/api
+- API: `http://localhost:5000/api`
+- Uploads: `http://localhost:5000/uploads`
+
+## Render Deployment
+
+Deploy this `backend` folder as a **Web Service** on Render.
+
+### Render settings
+
+- Root Directory: `backend`
+- Build Command: `npm install`
+- Start Command: `npm start`
+
+### Required environment variables
+
+```env
+PORT=5000
+MONGO_URI=your_render_mongodb_connection_string
+JWT_SECRET=your_long_random_secret
+FRONTEND_URL=https://your-vercel-domain.vercel.app
 ```
 
-Uploads are served from:
+## Important Note
 
-```text
-http://localhost:5000/uploads
-```
+This backend currently stores uploaded files locally in `uploads/`.
+
+That works locally and may work during simple testing, but for long-term production use on cloud hosting, a persistent storage solution like Cloudinary or similar is recommended.

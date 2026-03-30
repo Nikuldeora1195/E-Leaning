@@ -3,10 +3,10 @@
   "version": "1.0.0",
   "description": "LearnMax - E-learning platform by Nikul Kumar",
   "scripts": {
-    "dev": "cd eduvillage-frontend && npm run dev",
-    "dev:frontend": "cd eduvillage-frontend && npm run dev",
+    "dev": "cd frontend && npm run dev",
+    "dev:frontend": "cd frontend && npm run dev",
     "dev:backend": "cd backend && npm run start",
-    "build": "cd eduvillage-frontend && npm run build",
+    "build": "cd frontend && npm run build",
     "start": "cd backend && npm run start"
   },
   "keywords": [],
