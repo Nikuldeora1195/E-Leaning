@@ -14,6 +14,7 @@ const Navbar = () => {
         { to: "/admin/dashboard", label: "Dashboard" },
         { to: "/admin/users", label: "Users" },
         { to: "/admin/courses", label: "Courses" },
+        { to: "/profile", label: "Profile" },
       ];
     }
 
@@ -23,6 +24,7 @@ const Navbar = () => {
         { to: "/teacher/courses", label: "Courses" },
         { to: "/teacher/students", label: "Students" },
         { to: "/teacher/announcements/create", label: "Announcements" },
+        { to: "/profile", label: "Profile" },
       ];
     }
 
@@ -31,6 +33,7 @@ const Navbar = () => {
       { to: "/courses", label: "Courses" },
       { to: "/my-courses", label: "My Learning" },
       { to: "/announcements", label: "Announcements" },
+      { to: "/profile", label: "Profile" },
     ];
   }, [user?.role]);
 

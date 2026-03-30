@@ -81,19 +81,19 @@ const MyCourses = () => {
         </section>
 
         <section className="grid gap-4 md:grid-cols-3">
-          <div className="rounded-[24px] border border-[#ece8f7] bg-white p-6 shadow-sm">
+          <div className="rounded-3xl border border-[#ece8f7] bg-white p-6 shadow-sm">
             <p className="text-sm font-medium text-[#7a7392]">Total Courses</p>
             <p className="mt-3 text-4xl font-semibold text-[#1f1637]">
               {totalCourses}
             </p>
           </div>
-          <div className="rounded-[24px] border border-[#ece8f7] bg-white p-6 shadow-sm">
+          <div className="rounded-3xl border border-[#ece8f7] bg-white p-6 shadow-sm">
             <p className="text-sm font-medium text-[#7a7392]">Published</p>
             <p className="mt-3 text-4xl font-semibold text-[#1f1637]">
               {publishedCourses}
             </p>
           </div>
-          <div className="rounded-[24px] border border-[#ece8f7] bg-white p-6 shadow-sm">
+          <div className="rounded-3xl border border-[#ece8f7] bg-white p-6 shadow-sm">
             <p className="text-sm font-medium text-[#7a7392]">Drafts</p>
             <p className="mt-3 text-4xl font-semibold text-[#1f1637]">
               {draftCourses}

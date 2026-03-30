@@ -265,6 +265,7 @@ import Students from "./pages/teacher/Students";
 import CreateAnnouncement from "./pages/teacher/CreateAnnouncement";
 import Announcements from "./pages/student/Announcements";
 import CreateQuiz from "./pages/teacher/CreateQuiz";
+import ProfileSettings from "./pages/account/ProfileSettings";
 
 // Student Tools
 import QuizPage from "./pages/student/QuizPage";
@@ -288,6 +289,9 @@ function App() {
             <Route path="/" element={<Login />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
+            <Route path="/profile" element={
+              <ProtectedRoute allowedRoles={["student", "teacher", "admin"]}> <ProfileSettings /> </ProtectedRoute>
+            } />
 
             {/* ================= PROTECTED STUDENT ROUTES ================= */}
             <Route path="/dashboard" element={

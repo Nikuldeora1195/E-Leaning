@@ -19,7 +19,7 @@ exports.generateCertificate = async (req, res) => {
     }
 
     // 🧪 SIMULATED CERTIFICATE URL
-    const certificateUrl = `https://certificate.eduvillage.fake/${enrollment._id}`;
+    const certificateUrl = `https://certificate.learnmax.fake/${enrollment._id}`;
 
     enrollment.certificateIssued = true;
     enrollment.certificateUrl = certificateUrl;

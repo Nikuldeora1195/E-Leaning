@@ -34,6 +34,7 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 const healthRoutes = require("./routes/health.routes");
 const authRoutes = require("./routes/auth.routes");
+const userRoutes = require("./routes/user.routes");
 const protectedRoutes = require("./routes/protected.routes");
 const roleTestRoutes = require("./routes/role-test.routes");
 const courseRoutes = require("./routes/course.routes");
@@ -42,10 +43,12 @@ const notificationRoutes = require("./routes/notification.routes");
 const adminRoutes = require("./routes/admin.routes");
 const certificateRoutes = require("./routes/certificate.routes");
 const quizRoutes = require("./routes/quiz.routes");
+const reviewRoutes = require("./routes/review.routes");
 const errorHandler = require("./middleware/error.middleware");
 
 app.use("/api/health", healthRoutes);
 app.use("/api/auth", authRoutes);
+app.use("/api/users", userRoutes);
 app.use("/api/protected", protectedRoutes);
 app.use("/api/role-test", roleTestRoutes);
 app.use("/api/courses", courseRoutes);
@@ -55,6 +58,7 @@ app.use("/api/content", require("./routes/content.routes"));
 app.use("/api/admin", adminRoutes);
 app.use("/api/certificates", certificateRoutes);
 app.use("/api/quizzes", quizRoutes);
+app.use("/api/reviews", reviewRoutes);
 app.use(errorHandler);
 
 app.listen(PORT, () => {

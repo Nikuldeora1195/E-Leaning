@@ -3,6 +3,7 @@ import toast from "react-hot-toast";
 import AdminLayout from "../../components/app/AdminLayout";
 import {
   getAdminUsers,
+  reviewTeacherRequest,
   toggleAdminUserStatus,
   updateAdminUserRole,
 } from "../../api/adminApi";
@@ -33,7 +34,11 @@ const AdminUsers = () => {
 
   const filteredUsers = useMemo(() => {
     return users.filter((user) => {
-      const matchesFilter = filter === "all" || user.role === filter;
+      const matchesFilter =
+        filter === "all" ||
+        user.role === filter ||
+        (filter === "teacher-requests" &&
+          user.teacherRequestStatus === "requested");
       const query = search.toLowerCase();
       const matchesSearch =
         user.name?.toLowerCase().includes(query) ||
@@ -49,6 +54,9 @@ const AdminUsers = () => {
     teachers: users.filter((user) => user.role === "teacher").length,
     admins: users.filter((user) => user.role === "admin").length,
     active: users.filter((user) => user.isActive).length,
+    pendingTeacherRequests: users.filter(
+      (user) => user.teacherRequestStatus === "requested"
+    ).length,
   };
 
   const filters = [
@@ -56,6 +64,10 @@ const AdminUsers = () => {
     { key: "student", label: `Students (${stats.students})` },
     { key: "teacher", label: `Teachers (${stats.teachers})` },
     { key: "admin", label: `Admins (${stats.admins})` },
+    {
+      key: "teacher-requests",
+      label: `Teacher Requests (${stats.pendingTeacherRequests})`,
+    },
   ];
 
   const handleRoleChange = async (userId, role) => {
@@ -100,6 +112,35 @@ const AdminUsers = () => {
     }
   };
 
+  const handleTeacherRequest = async (userId, action) => {
+    const toastId = toast.loading(
+      action === "approve" ? "Approving request..." : "Rejecting request..."
+    );
+    setBusyUserId(userId);
+
+    try {
+      const res = await reviewTeacherRequest(userId, action);
+      setUsers((prev) =>
+        prev.map((user) =>
+          user._id === userId ? { ...user, ...res.data.user } : user
+        )
+      );
+      toast.success(
+        action === "approve"
+          ? "Teacher access approved"
+          : "Teacher request rejected",
+        { id: toastId }
+      );
+    } catch (error) {
+      toast.error(
+        error.response?.data?.message || "Failed to review teacher request",
+        { id: toastId }
+      );
+    } finally {
+      setBusyUserId("");
+    }
+  };
+
   if (loading) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-[#f8f7fb]">
@@ -125,26 +166,32 @@ const AdminUsers = () => {
           </div>
         </section>
 
-        <section className="grid gap-4 md:grid-cols-5">
-          <div className="rounded-[24px] border border-[#ece8f7] bg-white p-6 shadow-sm">
+        <section className="grid gap-4 md:grid-cols-6">
+          <div className="rounded-3xl border border-[#ece8f7] bg-white p-6 shadow-sm">
             <p className="text-sm font-medium text-[#7a7392]">Total Users</p>
             <p className="mt-3 text-4xl font-semibold text-[#1f1637]">{stats.total}</p>
           </div>
-          <div className="rounded-[24px] border border-[#ece8f7] bg-white p-6 shadow-sm">
+          <div className="rounded-3xl border border-[#ece8f7] bg-white p-6 shadow-sm">
             <p className="text-sm font-medium text-[#7a7392]">Students</p>
             <p className="mt-3 text-4xl font-semibold text-[#1f1637]">{stats.students}</p>
           </div>
-          <div className="rounded-[24px] border border-[#ece8f7] bg-white p-6 shadow-sm">
+          <div className="rounded-3xl border border-[#ece8f7] bg-white p-6 shadow-sm">
             <p className="text-sm font-medium text-[#7a7392]">Teachers</p>
             <p className="mt-3 text-4xl font-semibold text-[#1f1637]">{stats.teachers}</p>
           </div>
-          <div className="rounded-[24px] border border-[#ece8f7] bg-white p-6 shadow-sm">
+          <div className="rounded-3xl border border-[#ece8f7] bg-white p-6 shadow-sm">
             <p className="text-sm font-medium text-[#7a7392]">Admins</p>
             <p className="mt-3 text-4xl font-semibold text-[#1f1637]">{stats.admins}</p>
           </div>
-          <div className="rounded-[24px] border border-[#ece8f7] bg-white p-6 shadow-sm">
+          <div className="rounded-3xl border border-[#ece8f7] bg-white p-6 shadow-sm">
             <p className="text-sm font-medium text-[#7a7392]">Active</p>
             <p className="mt-3 text-4xl font-semibold text-[#1f1637]">{stats.active}</p>
+          </div>
+          <div className="rounded-3xl border border-[#ece8f7] bg-white p-6 shadow-sm">
+            <p className="text-sm font-medium text-[#7a7392]">Teacher Requests</p>
+            <p className="mt-3 text-4xl font-semibold text-[#1f1637]">
+              {stats.pendingTeacherRequests}
+            </p>
           </div>
         </section>
 
@@ -188,7 +235,7 @@ const AdminUsers = () => {
             </div>
           ) : (
             <div className="overflow-x-auto">
-              <table className="w-full min-w-[860px]">
+              <table className="w-full min-w-215">
                 <thead className="border-b border-[#ece8f7] bg-[#faf8ff]">
                   <tr>
                     <th className="px-6 py-4 text-left text-sm font-semibold text-[#1f1637]">
@@ -241,31 +288,62 @@ const AdminUsers = () => {
                         </select>
                       </td>
                       <td className="px-6 py-4">
-                        <span
-                          className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold ${
-                            user.isActive
-                              ? "bg-[#e8fbef] text-[#18794e]"
-                              : "bg-[#fff1f1] text-[#b42318]"
-                          }`}
-                        >
-                          {user.isActive ? "Active" : "Disabled"}
-                        </span>
+                        <div className="flex flex-wrap gap-2">
+                          <span
+                            className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold ${
+                              user.isActive
+                                ? "bg-[#e8fbef] text-[#18794e]"
+                                : "bg-[#fff1f1] text-[#b42318]"
+                            }`}
+                          >
+                            {user.isActive ? "Active" : "Disabled"}
+                          </span>
+                          {user.teacherRequestStatus === "requested" && (
+                            <span className="inline-flex rounded-full bg-[#fff4e8] px-3 py-1 text-xs font-semibold text-[#b54708]">
+                              Teacher Request
+                            </span>
+                          )}
+                        </div>
                       </td>
                       <td className="px-6 py-4 text-sm text-[#6b6680]">
                         {new Date(user.createdAt).toLocaleDateString()}
                       </td>
                       <td className="px-6 py-4">
-                        <button
-                          onClick={() => handleStatusToggle(user._id)}
-                          disabled={busyUserId === user._id}
-                          className={`rounded-full px-4 py-2 text-sm font-semibold transition ${
-                            user.isActive
-                              ? "border border-[#f2c5c5] text-[#b42318] hover:bg-[#fff5f5]"
-                              : "border border-[#cde8d7] text-[#18794e] hover:bg-[#f4fcf6]"
-                          } disabled:opacity-60`}
-                        >
-                          {user.isActive ? "Disable" : "Enable"}
-                        </button>
+                        <div className="flex flex-wrap gap-2">
+                          {user.teacherRequestStatus === "requested" && (
+                            <>
+                              <button
+                                onClick={() =>
+                                  handleTeacherRequest(user._id, "approve")
+                                }
+                                disabled={busyUserId === user._id}
+                                className="rounded-full border border-[#cde8d7] px-4 py-2 text-sm font-semibold text-[#18794e] transition hover:bg-[#f4fcf6] disabled:opacity-60"
+                              >
+                                Approve
+                              </button>
+                              <button
+                                onClick={() =>
+                                  handleTeacherRequest(user._id, "reject")
+                                }
+                                disabled={busyUserId === user._id}
+                                className="rounded-full border border-[#f5d0d0] px-4 py-2 text-sm font-semibold text-[#b42318] transition hover:bg-[#fff5f5] disabled:opacity-60"
+                              >
+                                Reject
+                              </button>
+                            </>
+                          )}
+                          <button
+                            onClick={() => handleStatusToggle(user._id)}
+                            disabled={busyUserId === user._id}
+                            className={`rounded-full px-4 py-2 text-sm font-semibold transition ${
+                              user.isActive
+                                ? "border border-[#f2c5c5] text-[#b42318] hover:bg-[#fff5f5]"
+                                : "border border-[#cde8d7] text-[#18794e] hover:bg-[#f4fcf6]"
+                            } disabled:opacity-60`}
+                          >
+                            {user.isActive ? "Disable" : "Enable"}
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   ))}

@@ -106,7 +106,7 @@ const AdminDashboard = () => {
           {overviewCards.map((card) => (
             <div
               key={card.label}
-              className="rounded-[24px] border border-[#ece8f7] bg-white p-6 shadow-sm"
+              className="rounded-3xl border border-[#ece8f7] bg-white p-6 shadow-sm"
             >
               <p className="text-sm font-medium text-[#7a7392]">{card.label}</p>
               <p className="mt-3 text-4xl font-semibold text-[#1f1637]">

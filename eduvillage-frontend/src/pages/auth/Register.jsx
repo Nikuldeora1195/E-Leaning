@@ -12,6 +12,7 @@ const Register = () => {
     name: "",
     email: "",
     password: "",
+    teacherAccessRequested: false,
   });
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -37,7 +38,7 @@ const Register = () => {
 
   return (
     <div className="min-h-screen bg-[#f8f7fb] px-4 py-8">
-      <div className="mx-auto grid min-h-[calc(100vh-4rem)] max-w-6xl overflow-hidden rounded-[32px] border border-[#ece8f7] bg-white shadow-sm lg:grid-cols-[0.95fr_1.05fr]">
+      <div className="mx-auto grid min-h-[calc(100vh-4rem)] max-w-6xl overflow-hidden rounded-4xl border border-[#ece8f7] bg-white shadow-sm lg:grid-cols-[0.95fr_1.05fr]">
         <section className="flex items-center justify-center p-6 sm:p-10">
           <div className="w-full max-w-md">
             <div className="mb-8 space-y-3 text-center lg:text-left">
@@ -105,11 +106,28 @@ const Register = () => {
                 </div>
               </div>
 
-              <div className="rounded-[20px] border border-[#ece8f7] bg-[#faf8ff] px-4 py-3 text-sm text-[#5e5872]">
-                New accounts are created as{" "}
-                <span className="font-semibold text-[#1f1637]">students</span>.
-                Teacher access is assigned later from the admin panel.
-              </div>
+              <label className="flex items-start gap-3 rounded-3xl border border-[#ece8f7] bg-[#faf8ff] p-4">
+                <input
+                  type="checkbox"
+                  checked={form.teacherAccessRequested}
+                  onChange={(e) =>
+                    setForm({
+                      ...form,
+                      teacherAccessRequested: e.target.checked,
+                    })
+                  }
+                  className="mt-1 h-4 w-4 rounded border-[#d6cef1] accent-[#6d28d9]"
+                />
+                <div>
+                  <p className="text-sm font-medium text-[#1f1637]">
+                    Request teacher access
+                  </p>
+                  <p className="mt-1 text-sm leading-6 text-[#6b6680]">
+                    Your account will still be created as a student. Admin can
+                    approve teacher access later from the dashboard.
+                  </p>
+                </div>
+              </label>
 
               <button
                 type="submit"
@@ -158,13 +176,13 @@ const Register = () => {
           </div>
 
           <div className="space-y-4">
-            <div className="rounded-[24px] bg-white p-5">
+            <div className="rounded-3xl bg-white p-5">
               <p className="text-sm font-medium text-[#7a7392]">Student Mode</p>
               <p className="mt-2 text-sm leading-6 text-[#5e5872]">
                 Enroll in courses, track progress, and view certificates.
               </p>
             </div>
-            <div className="rounded-[24px] bg-white p-5">
+            <div className="rounded-3xl bg-white p-5">
               <p className="text-sm font-medium text-[#7a7392]">Teacher Access</p>
               <p className="mt-2 text-sm leading-6 text-[#5e5872]">
                 Teacher access is enabled by admin after account approval.

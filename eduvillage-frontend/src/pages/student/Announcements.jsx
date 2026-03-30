@@ -19,7 +19,7 @@ const Announcements = () => {
   }, []);
 
   const sevenDaysAgo = useMemo(
-    () => new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
+    () => new Date(new Date().getTime() - 7 * 24 * 60 * 60 * 1000),
     []
   );
 
@@ -80,19 +80,19 @@ const Announcements = () => {
         </section>
 
         <section className="grid gap-4 md:grid-cols-3">
-          <div className="rounded-[24px] border border-[#ece8f7] bg-white p-6 shadow-sm">
+          <div className="rounded-3xl border border-[#ece8f7] bg-white p-6 shadow-sm">
             <p className="text-sm font-medium text-[#7a7392]">Total</p>
             <p className="mt-3 text-4xl font-semibold text-[#1f1637]">
               {announcements.length}
             </p>
           </div>
-          <div className="rounded-[24px] border border-[#ece8f7] bg-white p-6 shadow-sm">
+          <div className="rounded-3xl border border-[#ece8f7] bg-white p-6 shadow-sm">
             <p className="text-sm font-medium text-[#7a7392]">This Week</p>
             <p className="mt-3 text-4xl font-semibold text-[#1f1637]">
               {recentCount}
             </p>
           </div>
-          <div className="rounded-[24px] border border-[#ece8f7] bg-white p-6 shadow-sm">
+          <div className="rounded-3xl border border-[#ece8f7] bg-white p-6 shadow-sm">
             <p className="text-sm font-medium text-[#7a7392]">Latest</p>
             <p className="mt-3 text-lg font-semibold text-[#1f1637]">
               {announcements[0] ? formatDate(announcements[0].createdAt) : "N/A"}

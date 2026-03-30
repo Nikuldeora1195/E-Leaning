@@ -19,6 +19,10 @@ const quizSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    passingScore: {
+      type: Number,
+      default: 60,
+    },
     questions: [questionSchema],
   },
   { timestamps: true }

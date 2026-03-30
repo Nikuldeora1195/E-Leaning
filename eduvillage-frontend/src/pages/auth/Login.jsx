@@ -57,7 +57,7 @@ const Login = () => {
 
   return (
     <div className="min-h-screen bg-[#f8f7fb] px-4 py-8">
-      <div className="mx-auto grid min-h-[calc(100vh-4rem)] max-w-6xl overflow-hidden rounded-[32px] border border-[#ece8f7] bg-white shadow-sm lg:grid-cols-[1.05fr_0.95fr]">
+      <div className="mx-auto grid min-h-[calc(100vh-4rem)] max-w-6xl overflow-hidden rounded-4xl border border-[#ece8f7] bg-white shadow-sm lg:grid-cols-[1.05fr_0.95fr]">
         <section className="hidden bg-[#faf8ff] p-10 lg:flex lg:flex-col lg:justify-between">
           <div>
             <div className="flex items-center gap-3">
@@ -87,13 +87,13 @@ const Login = () => {
           </div>
 
           <div className="grid gap-4 sm:grid-cols-2">
-            <div className="rounded-[24px] bg-white p-5">
+            <div className="rounded-3xl bg-white p-5">
               <p className="text-sm font-medium text-[#7a7392]">For Students</p>
               <p className="mt-2 text-sm leading-6 text-[#5e5872]">
                 Track progress, continue lessons, and stay updated.
               </p>
             </div>
-            <div className="rounded-[24px] bg-white p-5">
+            <div className="rounded-3xl bg-white p-5">
               <p className="text-sm font-medium text-[#7a7392]">For Educators</p>
               <p className="mt-2 text-sm leading-6 text-[#5e5872]">
                 Create courses, manage lessons, and publish content.

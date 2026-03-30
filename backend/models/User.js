@@ -20,6 +20,11 @@ const userSchema = new mongoose.Schema(
       enum: ["student", "teacher", "admin"],
       default: "student"
     },
+    teacherRequestStatus: {
+      type: String,
+      enum: ["none", "requested", "approved", "rejected"],
+      default: "none"
+    },
     isActive: {
   type: Boolean,
   default: true

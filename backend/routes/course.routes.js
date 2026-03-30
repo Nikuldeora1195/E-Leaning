@@ -11,6 +11,7 @@ const {
   getMyCourses,
   togglePublish,
    getCourseById,
+   getTeacherAnalytics,
    updateCourse
 } = require("../controllers/course.controller");
 
@@ -54,6 +55,13 @@ router.get(
   protect,
   authorizeRoles("teacher"),
   getMyCourses
+);
+
+router.get(
+  "/teacher/analytics",
+  protect,
+  authorizeRoles("teacher"),
+  getTeacherAnalytics
 );
 
 

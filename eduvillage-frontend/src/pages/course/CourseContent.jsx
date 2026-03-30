@@ -28,7 +28,9 @@ const getEmbedUrl = (url = "") => {
       if (id) return `https://www.youtube.com/embed/${id}`;
       if (parsed.pathname.includes("/embed/")) return url;
     }
-  } catch {}
+  } catch {
+    // Invalid URL format, return empty string
+  }
   return "";
 };
 
@@ -38,7 +40,7 @@ const MediaPreview = ({ item }) => {
   return (
     <div className="space-y-4">
       {item.videoUrl && (
-        <div className="overflow-hidden rounded-[24px] border border-[#ece8f7] bg-white">
+        <div className="overflow-hidden rounded-3xl border border-[#ece8f7] bg-white">
           {embedUrl ? (
             <iframe
               className="h-72 w-full"
@@ -60,7 +62,7 @@ const MediaPreview = ({ item }) => {
         <img
           src={item.imageUrl}
           alt={item.title || "Lesson media"}
-          className="max-h-[420px] w-full rounded-[24px] border border-[#ece8f7] object-cover"
+          className="max-h-105 w-full rounded-3xl border border-[#ece8f7] object-cover"
           onError={(e) => {
             e.target.style.display = "none";
           }}
@@ -140,6 +142,7 @@ const CourseContent = () => {
 
   useEffect(() => {
     loadContent();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [courseId, isStudent]);
 
   const toggleSection = (id) => {
@@ -347,7 +350,7 @@ const CourseContent = () => {
   return (
     <div className="min-h-screen bg-[#f6f4fb] p-4 sm:p-6 lg:p-8">
       <div className="mx-auto max-w-7xl space-y-8">
-        <section className="rounded-[32px] border border-[#ece8f7] bg-[linear-gradient(135deg,#f7f3ff_0%,#ffffff_55%,#f4f0ff_100%)] p-6 shadow-sm sm:p-8">
+        <section className="rounded-4xl border border-[#ece8f7] bg-[linear-gradient(135deg,#f7f3ff_0%,#ffffff_55%,#f4f0ff_100%)] p-6 shadow-sm sm:p-8">
           <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
             <div className="space-y-3">
               <span className="inline-flex rounded-full bg-white px-4 py-1.5 text-sm font-semibold text-[#6d28d9]">
@@ -382,15 +385,15 @@ const CourseContent = () => {
             </div>
           </div>
           <div className="mt-8 grid gap-4 md:grid-cols-3">
-            <div className="rounded-[24px] bg-white/90 p-5">
+            <div className="rounded-3xl bg-white/90 p-5">
               <p className="text-sm text-[#7a7392]">Sections</p>
               <p className="mt-2 text-3xl font-semibold text-[#1f1637]">{sections.length}</p>
             </div>
-            <div className="rounded-[24px] bg-white/90 p-5">
+            <div className="rounded-3xl bg-white/90 p-5">
               <p className="text-sm text-[#7a7392]">Lessons</p>
               <p className="mt-2 text-3xl font-semibold text-[#1f1637]">{totalLessons}</p>
             </div>
-            <div className="rounded-[24px] bg-white/90 p-5">
+            <div className="rounded-3xl bg-white/90 p-5">
               <p className="text-sm text-[#7a7392]">{isStudent ? "Progress" : "Status"}</p>
               <p className="mt-2 text-3xl font-semibold text-[#1f1637]">
                 {isStudent ? `${progress}%` : "Ready"}
@@ -677,7 +680,7 @@ const CourseContent = () => {
                                 </>
                               ) : (
                                 <>
-                                  <div className="rounded-[24px] bg-white p-5">
+                                  <div className="rounded-3xl bg-white p-5">
                                     <p className="font-serif text-[17px] leading-8 text-[#433b5d]">{lesson.content}</p>
                                   </div>
                                   <MediaPreview item={lesson} />
@@ -688,7 +691,7 @@ const CourseContent = () => {
                         );
                       })}
                       {section.lessons.length === 0 && (
-                        <div className="rounded-[24px] bg-[#fcfbff] px-5 py-8 text-center text-sm text-[#6b6680]">
+                        <div className="rounded-3xl bg-[#fcfbff] px-5 py-8 text-center text-sm text-[#6b6680]">
                           No lessons in this section yet.
                         </div>
                       )}

@@ -1,6 +1,6 @@
 import { useEffect, useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
-import { getMyEnrollments, updateProgress } from "../../api/courseApi";
+import { getMyEnrollments } from "../../api/courseApi";
 import usePageTitle from "../../utils/usePageTitle";
 import StudentLayout from "../../components/app/StudentLayout";
 import { AuthContext } from "../../context/AuthContext";
@@ -37,22 +37,6 @@ const MyCourses = () => {
   useEffect(() => {
     loadCourses();
   }, []);
-
-  const handleProgressChange = async (id, value) => {
-    const progress = Number(value);
-    if (progress < 0 || progress > 100 || Number.isNaN(progress)) return;
-
-    try {
-      await updateProgress(id, progress);
-      loadCourses();
-    } catch (err) {
-      console.error("Progress update failed", err);
-      setError(
-        err.response?.data?.message ||
-          "Failed to update progress. Please try again."
-      );
-    }
-  };
 
   const filteredCourses = courses.filter((item) => {
     if (filter === "completed") return item.isCompleted;
@@ -99,26 +83,26 @@ const MyCourses = () => {
               Keep going, {user?.name || "Student"}
             </h1>
             <p className="max-w-2xl text-base text-[#6b6680]">
-              Track your enrolled courses, update progress, and continue from
-              where you left off.
+              Track your enrolled courses, continue learning, and let your
+              lesson completion update progress automatically.
             </p>
           </div>
         </section>
 
         <section className="grid gap-4 md:grid-cols-3">
-          <div className="rounded-[24px] border border-[#ece8f7] bg-white p-6 shadow-sm">
+          <div className="rounded-3xl border border-[#ece8f7] bg-white p-6 shadow-sm">
             <p className="text-sm font-medium text-[#7a7392]">Total Enrolled</p>
             <p className="mt-3 text-4xl font-semibold text-[#1f1637]">
               {totalCourses}
             </p>
           </div>
-          <div className="rounded-[24px] border border-[#ece8f7] bg-white p-6 shadow-sm">
+          <div className="rounded-3xl border border-[#ece8f7] bg-white p-6 shadow-sm">
             <p className="text-sm font-medium text-[#7a7392]">In Progress</p>
             <p className="mt-3 text-4xl font-semibold text-[#1f1637]">
               {inProgressCourses}
             </p>
           </div>
-          <div className="rounded-[24px] border border-[#ece8f7] bg-white p-6 shadow-sm">
+          <div className="rounded-3xl border border-[#ece8f7] bg-white p-6 shadow-sm">
             <p className="text-sm font-medium text-[#7a7392]">Completed</p>
             <p className="mt-3 text-4xl font-semibold text-[#1f1637]">
               {completedCourses}
@@ -225,25 +209,15 @@ const MyCourses = () => {
                   </div>
 
                   <div className="mt-5 grid gap-4 md:grid-cols-[1fr_auto] md:items-end">
-                    <div>
-                      <label className="mb-2 block text-sm font-medium text-[#4f4864]">
-                        Update progress
-                      </label>
-                      <div className="flex items-center gap-2">
-                        <input
-                          type="number"
-                          min="0"
-                          max="100"
-                          value={progress}
-                          onChange={(e) =>
-                            handleProgressChange(item._id, e.target.value)
-                          }
-                          className="w-full rounded-2xl border border-[#ddd6f3] px-4 py-3 text-sm text-[#1f1637] outline-none transition focus:border-[#6d28d9]"
-                        />
-                        <span className="text-sm text-[#7a7392]">%</span>
-                      </div>
+                    <div className="rounded-2xl bg-[#faf8ff] px-4 py-4">
+                      <p className="text-sm font-medium text-[#4f4864]">
+                        Progress updates automatically
+                      </p>
+                      <p className="mt-1 text-sm leading-6 text-[#6b6680]">
+                        Mark lessons complete from the course content page to
+                        move your progress forward.
+                      </p>
                     </div>
-
                     <button
                       onClick={() => navigate(`/courses/${course?._id}/content`)}
                       className="rounded-full bg-[#6d28d9] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#5b21b6]"

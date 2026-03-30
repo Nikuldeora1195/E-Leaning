@@ -29,9 +29,43 @@ const updateUserRole = async (req, res) => {
     if (!user) return res.status(404).json({ message: "User not found" });
 
     user.role = role;
+    if (role === "teacher") {
+      user.teacherRequestStatus = "approved";
+    } else if (role !== "teacher" && user.teacherRequestStatus === "approved") {
+      user.teacherRequestStatus = "none";
+    }
     await user.save();
 
     res.json({ message: "User role updated", user });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+const reviewTeacherRequest = async (req, res) => {
+  try {
+    const { action } = req.body;
+    const user = await User.findById(req.params.id);
+
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    if (user.teacherRequestStatus !== "requested") {
+      return res.status(400).json({ message: "No pending teacher request" });
+    }
+
+    if (action === "approve") {
+      user.role = "teacher";
+      user.teacherRequestStatus = "approved";
+    } else if (action === "reject") {
+      user.role = "student";
+      user.teacherRequestStatus = "rejected";
+    } else {
+      return res.status(400).json({ message: "Invalid review action" });
+    }
+
+    await user.save();
+
+    res.json({ message: "Teacher request updated", user });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -94,6 +128,9 @@ const getAdminStats = async (req, res) => {
     const totalUsers = await User.countDocuments();
     const totalStudents = await User.countDocuments({ role: "student" });
     const totalTeachers = await User.countDocuments({ role: "teacher" });
+    const pendingTeacherRequests = await User.countDocuments({
+      teacherRequestStatus: "requested",
+    });
     const totalCourses = await Course.countDocuments();
     const totalEnrollments = await Enrollment.countDocuments();
 
@@ -101,6 +138,7 @@ const getAdminStats = async (req, res) => {
       totalUsers,
       totalStudents,
       totalTeachers,
+      pendingTeacherRequests,
       totalCourses,
       totalEnrollments,
       completionRate: 65 // simulated
@@ -113,6 +151,7 @@ const getAdminStats = async (req, res) => {
 module.exports = {
   getAllUsers,
   updateUserRole,
+  reviewTeacherRequest,
   toggleUserStatus,
   getAllCourses,
   deleteCourse,

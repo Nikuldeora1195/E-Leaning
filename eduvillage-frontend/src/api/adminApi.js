@@ -20,6 +20,12 @@ export const updateAdminUserRole = (userId, role) => {
   return axiosInstance.put(`/admin/users/${userId}/role`, { role });
 };
 
+export const reviewTeacherRequest = (userId, action) => {
+  return axiosInstance.put(`/admin/users/${userId}/teacher-request`, {
+    action,
+  });
+};
+
 export const toggleAdminUserStatus = (userId) => {
   return axiosInstance.put(`/admin/users/${userId}/status`);
 };

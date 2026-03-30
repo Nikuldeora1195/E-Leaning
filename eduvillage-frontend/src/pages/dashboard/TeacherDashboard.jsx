@@ -14,38 +14,25 @@ const TeacherDashboard = () => {
     publishedCourses: 0,
     draftCourses: 0,
     totalStudents: 0,
+    completedEnrollments: 0,
+    averageProgress: 0,
+    averageRating: 0,
   });
   const [recentCourses, setRecentCourses] = useState([]);
+  const [topCourses, setTopCourses] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const loadDashboardData = async () => {
       try {
-        const response = await teacherCourseApi.getMyCourses();
-        const courses = response.data;
+        const [analyticsRes, coursesRes] = await Promise.all([
+          teacherCourseApi.getTeacherAnalytics(),
+          teacherCourseApi.getMyCourses(),
+        ]);
 
-        const publishedCourses = courses.filter((course) => course.isPublished).length;
-        const draftCourses = courses.length - publishedCourses;
-
-        let totalStudents = 0;
-
-        for (const course of courses) {
-          try {
-            const studentRes = await teacherCourseApi.getCourseStudents(course._id);
-            totalStudents += studentRes.data.length;
-          } catch {
-            console.log("No students for course:", course.title);
-          }
-        }
-
-        setStats({
-          totalCourses: courses.length,
-          publishedCourses,
-          draftCourses,
-          totalStudents,
-        });
-
-        setRecentCourses(courses.slice(0, 4));
+        setStats(analyticsRes.data);
+        setTopCourses(analyticsRes.data.topCourses || []);
+        setRecentCourses(coursesRes.data.slice(0, 4));
       } catch (error) {
         console.error("Failed to load dashboard data:", error);
       } finally {
@@ -81,9 +68,9 @@ const TeacherDashboard = () => {
       to: "/teacher/students",
     },
     {
-      title: "Announcements",
-      description: "Post updates for your learners.",
-      to: "/teacher/announcements/create",
+      title: "Profile Settings",
+      description: "Update your account details and password.",
+      to: "/profile",
     },
   ];
 
@@ -100,131 +87,149 @@ const TeacherDashboard = () => {
                 Welcome back, {user?.name || "Teacher"}
               </h1>
               <p className="text-base text-[#6b6680]">
-                Manage your courses, review student activity, and keep your
-                teaching workflow organized.
+                Track how your courses are performing, review student progress,
+                and keep teaching data in one place.
               </p>
             </div>
 
-            <div className="rounded-[24px] bg-[#faf8ff] p-5 lg:min-w-[260px]">
+            <div className="rounded-3xl bg-[#faf8ff] p-5 lg:min-w-70">
               <p className="text-sm text-[#7a7392]">Teaching Summary</p>
               <p className="mt-2 text-2xl font-semibold text-[#1f1637]">
-                {stats.totalCourses} courses
+                {stats.totalStudents} enrollments
               </p>
               <p className="mt-2 text-sm text-[#6b6680]">
-                {stats.totalStudents} total student enrollments across your
-                courses.
+                {stats.averageProgress}% average progress and {stats.averageRating} / 5 average rating.
               </p>
             </div>
           </div>
         </section>
 
         <section className="grid grid-cols-1 gap-4 md:grid-cols-4">
-          <div className="rounded-[24px] border border-[#ece8f7] bg-white p-6 shadow-sm">
+          <div className="rounded-3xl border border-[#ece8f7] bg-white p-6 shadow-sm">
             <p className="text-sm font-medium text-[#7a7392]">Total Courses</p>
             <p className="mt-3 text-4xl font-semibold text-[#1f1637]">
               {stats.totalCourses}
             </p>
           </div>
-          <div className="rounded-[24px] border border-[#ece8f7] bg-white p-6 shadow-sm">
+          <div className="rounded-3xl border border-[#ece8f7] bg-white p-6 shadow-sm">
             <p className="text-sm font-medium text-[#7a7392]">Published</p>
             <p className="mt-3 text-4xl font-semibold text-[#1f1637]">
               {stats.publishedCourses}
             </p>
           </div>
-          <div className="rounded-[24px] border border-[#ece8f7] bg-white p-6 shadow-sm">
-            <p className="text-sm font-medium text-[#7a7392]">Drafts</p>
+          <div className="rounded-3xl border border-[#ece8f7] bg-white p-6 shadow-sm">
+            <p className="text-sm font-medium text-[#7a7392]">Completion</p>
             <p className="mt-3 text-4xl font-semibold text-[#1f1637]">
-              {stats.draftCourses}
+              {stats.completedEnrollments}
             </p>
           </div>
-          <div className="rounded-[24px] border border-[#ece8f7] bg-white p-6 shadow-sm">
-            <p className="text-sm font-medium text-[#7a7392]">Students</p>
+          <div className="rounded-3xl border border-[#ece8f7] bg-white p-6 shadow-sm">
+            <p className="text-sm font-medium text-[#7a7392]">Avg Rating</p>
             <p className="mt-3 text-4xl font-semibold text-[#1f1637]">
-              {stats.totalStudents}
+              {stats.averageRating}
             </p>
           </div>
         </section>
 
-        <section className="grid gap-6 lg:grid-cols-[1.15fr_0.85fr]">
-          <div className="rounded-[28px] border border-[#ece8f7] bg-white p-6 shadow-sm">
-            <div className="mb-6 flex items-center justify-between gap-3">
-              <div>
-                <h2 className="text-2xl font-semibold text-[#1f1637]">
-                  Recent Courses
-                </h2>
-                <p className="mt-1 text-sm text-[#6b6680]">
-                  Your latest created or updated courses.
-                </p>
-              </div>
-              <Link
-                to="/teacher/courses"
-                className="rounded-full border border-[#d9cff6] px-4 py-2 text-sm font-medium text-[#6d28d9] transition hover:bg-[#f7f3ff]"
-              >
-                View All
-              </Link>
-            </div>
-
-            {recentCourses.length === 0 ? (
-              <div className="rounded-[24px] border border-dashed border-[#ddd6f3] bg-[#fcfbff] px-6 py-12 text-center">
-                <h3 className="text-xl font-semibold text-[#1f1637]">
-                  No courses yet
-                </h3>
-                <p className="mt-2 text-sm text-[#6b6680]">
-                  Create your first course to get started.
-                </p>
+        <section className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
+          <div className="space-y-6">
+            <div className="rounded-[28px] border border-[#ece8f7] bg-white p-6 shadow-sm">
+              <div className="mb-6 flex items-center justify-between gap-3">
+                <div>
+                  <h2 className="text-2xl font-semibold text-[#1f1637]">
+                    Recent Courses
+                  </h2>
+                  <p className="mt-1 text-sm text-[#6b6680]">
+                    Your latest created or updated courses.
+                  </p>
+                </div>
                 <Link
-                  to="/teacher/courses/create"
-                  className="mt-5 inline-flex rounded-full bg-[#6d28d9] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#5b21b6]"
+                  to="/teacher/courses"
+                  className="rounded-full border border-[#d9cff6] px-4 py-2 text-sm font-medium text-[#6d28d9] transition hover:bg-[#f7f3ff]"
                 >
-                  Create Course
+                  View All
                 </Link>
               </div>
-            ) : (
-              <div className="space-y-4">
-                {recentCourses.map((course) => (
-                  <div
-                    key={course._id}
-                    className="rounded-[24px] border border-[#ece8f7] bg-[#fcfbff] p-5"
-                  >
-                    <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-                      <div className="space-y-2">
-                        <h3 className="text-lg font-semibold text-[#1f1637]">
-                          {course.title}
-                        </h3>
-                        <p className="text-sm leading-6 text-[#6b6680]">
-                          {course.description}
-                        </p>
+
+              {recentCourses.length === 0 ? (
+                <div className="rounded-3xl border border-dashed border-[#ddd6f3] bg-[#fcfbff] px-6 py-12 text-center">
+                  <h3 className="text-xl font-semibold text-[#1f1637]">
+                    No courses yet
+                  </h3>
+                  <p className="mt-2 text-sm text-[#6b6680]">
+                    Create your first course to get started.
+                  </p>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {recentCourses.map((course) => (
+                    <div
+                      key={course._id}
+                      className="rounded-3xl border border-[#ece8f7] bg-[#fcfbff] p-5"
+                    >
+                      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+                        <div className="space-y-2">
+                          <h3 className="text-lg font-semibold text-[#1f1637]">
+                            {course.title}
+                          </h3>
+                          <p className="text-sm leading-6 text-[#6b6680]">
+                            {course.description}
+                          </p>
+                        </div>
+
+                        <span
+                          className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold ${
+                            course.isPublished
+                              ? "bg-[#e8fbef] text-[#18794e]"
+                              : "bg-[#f4f0ff] text-[#6d28d9]"
+                          }`}
+                        >
+                          {course.isPublished ? "Published" : "Draft"}
+                        </span>
                       </div>
-
-                      <span
-                        className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold ${
-                          course.isPublished
-                            ? "bg-[#e8fbef] text-[#18794e]"
-                            : "bg-[#f4f0ff] text-[#6d28d9]"
-                        }`}
-                      >
-                        {course.isPublished ? "Published" : "Draft"}
-                      </span>
                     </div>
+                  ))}
+                </div>
+              )}
+            </div>
 
-                    <div className="mt-5 flex flex-wrap gap-3">
-                      <Link
-                        to={`/teacher/courses/${course._id}/edit`}
-                        className="rounded-full bg-[#6d28d9] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[#5b21b6]"
-                      >
-                        Edit Course
-                      </Link>
-                      <Link
-                        to={`/courses/${course._id}/content`}
-                        className="rounded-full border border-[#d9cff6] px-4 py-2 text-sm font-semibold text-[#6d28d9] transition hover:bg-[#f7f3ff]"
-                      >
-                        Manage Content
-                      </Link>
-                    </div>
-                  </div>
-                ))}
+            <div className="rounded-[28px] border border-[#ece8f7] bg-white p-6 shadow-sm">
+              <div className="space-y-2">
+                <h2 className="text-2xl font-semibold text-[#1f1637]">
+                  Top Course Performance
+                </h2>
+                <p className="text-sm text-[#6b6680]">
+                  A quick look at which courses are attracting learners and keeping them active.
+                </p>
               </div>
-            )}
+
+              <div className="mt-5 space-y-3">
+                {topCourses.length === 0 ? (
+                  <div className="rounded-3xl bg-[#faf8ff] p-5 text-sm text-[#6b6680]">
+                    Analytics will appear here once students start enrolling and leaving reviews.
+                  </div>
+                ) : (
+                  topCourses.map((course) => (
+                    <div
+                      key={course._id}
+                      className="rounded-3xl border border-[#ece8f7] bg-[#fcfbff] p-5"
+                    >
+                      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                        <div>
+                          <p className="font-semibold text-[#1f1637]">{course.title}</p>
+                          <p className="mt-1 text-sm text-[#6b6680]">
+                            {course.enrollments} enrollments • {course.averageProgress}% average progress
+                          </p>
+                        </div>
+                        <span className="rounded-full bg-[#f4f0ff] px-3 py-1 text-sm font-semibold text-[#6d28d9]">
+                          {course.averageRating || 0} / 5
+                        </span>
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
+            </div>
           </div>
 
           <div className="rounded-[28px] border border-[#ece8f7] bg-white p-6 shadow-sm">

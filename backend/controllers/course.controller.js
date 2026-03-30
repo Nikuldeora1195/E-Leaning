@@ -1,6 +1,7 @@
 // const { completeLesson } = require("../../eduvillage-frontend/src/api/courseApi");
 const Course = require("../models/Course");
 const Enrollment = require("../models/Enrollment");
+const Review = require("../models/Review");
 
 // ===============================
 // CREATE COURSE (TEACHER)
@@ -195,6 +196,96 @@ const getCourseById = async (req, res) => {
   }
 };
 
+const getTeacherAnalytics = async (req, res) => {
+  try {
+    const courses = await Course.find({ createdBy: req.user.id }).lean();
+    const courseIds = courses.map((course) => course._id);
+
+    const enrollments = await Enrollment.find({
+      course: { $in: courseIds },
+    }).lean();
+
+    const reviews = await Review.find({
+      course: { $in: courseIds },
+    }).lean();
+
+    const totalCourses = courses.length;
+    const publishedCourses = courses.filter((course) => course.isPublished).length;
+    const totalStudents = enrollments.length;
+    const completedEnrollments = enrollments.filter(
+      (enrollment) => enrollment.isCompleted
+    ).length;
+    const averageProgress =
+      totalStudents > 0
+        ? Math.round(
+            enrollments.reduce(
+              (sum, enrollment) => sum + (enrollment.progress || 0),
+              0
+            ) / totalStudents
+          )
+        : 0;
+    const averageRating =
+      reviews.length > 0
+        ? Number(
+            (
+              reviews.reduce((sum, review) => sum + review.rating, 0) /
+              reviews.length
+            ).toFixed(1)
+          )
+        : 0;
+
+    const topCourses = courses
+      .map((course) => {
+        const courseEnrollments = enrollments.filter(
+          (enrollment) => enrollment.course.toString() === course._id.toString()
+        );
+        const courseReviews = reviews.filter(
+          (review) => review.course.toString() === course._id.toString()
+        );
+
+        return {
+          _id: course._id,
+          title: course.title,
+          isPublished: course.isPublished,
+          enrollments: courseEnrollments.length,
+          averageProgress:
+            courseEnrollments.length > 0
+              ? Math.round(
+                  courseEnrollments.reduce(
+                    (sum, enrollment) => sum + (enrollment.progress || 0),
+                    0
+                  ) / courseEnrollments.length
+                )
+              : 0,
+          averageRating:
+            courseReviews.length > 0
+              ? Number(
+                  (
+                    courseReviews.reduce((sum, review) => sum + review.rating, 0) /
+                    courseReviews.length
+                  ).toFixed(1)
+                )
+              : 0,
+        };
+      })
+      .sort((a, b) => b.enrollments - a.enrollments)
+      .slice(0, 5);
+
+    res.json({
+      totalCourses,
+      publishedCourses,
+      draftCourses: totalCourses - publishedCourses,
+      totalStudents,
+      completedEnrollments,
+      averageProgress,
+      averageRating,
+      topCourses,
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 
 
 
@@ -208,6 +299,7 @@ module.exports = {
   getMyCourses,
   togglePublish,
 getCourseById,
+  getTeacherAnalytics,
 // completeLesson,
   // getCourseById,
   updateCourse

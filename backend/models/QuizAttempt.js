@@ -12,8 +12,11 @@ const quizAttemptSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "Quiz",
     },
+    answers: [Number],
     score: Number,
     total: Number,
+    percentage: Number,
+    passed: Boolean,
   },
   { timestamps: true }
 );

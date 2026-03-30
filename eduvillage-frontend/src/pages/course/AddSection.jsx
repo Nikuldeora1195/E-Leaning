@@ -75,7 +75,7 @@ const AddSection = () => {
               <p className="text-xs text-[#7a7392]">{title.length}/100 characters</p>
             </div>
 
-            <div className="rounded-[24px] bg-[#faf8ff] p-5">
+            <div className="rounded-3xl bg-[#faf8ff] p-5">
               <h2 className="text-lg font-semibold text-[#1f1637]">
                 Good section examples
               </h2>

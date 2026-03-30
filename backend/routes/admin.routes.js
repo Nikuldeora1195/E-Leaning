@@ -7,6 +7,7 @@ const authorizeRoles = require("../middleware/role.middleware");
 const {
   getAllUsers,
   updateUserRole,
+  reviewTeacherRequest,
   toggleUserStatus,
   getAllCourses,
   deleteCourse,
@@ -16,6 +17,7 @@ const {
 // Users
 router.get("/users", protect, authorizeRoles("admin"), getAllUsers);
 router.put("/users/:id/role", protect, authorizeRoles("admin"), updateUserRole);
+router.put("/users/:id/teacher-request", protect, authorizeRoles("admin"), reviewTeacherRequest);
 router.put("/users/:id/status", protect, authorizeRoles("admin"), toggleUserStatus);
 
 // Courses

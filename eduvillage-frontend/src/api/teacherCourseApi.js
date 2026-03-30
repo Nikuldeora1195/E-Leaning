@@ -29,3 +29,7 @@ export const updateCourse = (id, data) => {
 export const getCourseStudents = (courseId) => {
   return axiosInstance.get(`/courses/${courseId}/students`);
 };
+
+export const getTeacherAnalytics = () => {
+  return axiosInstance.get("/courses/teacher/analytics");
+};

@@ -8,6 +8,7 @@ const {
   createQuiz,
   getQuizByCourse,
   submitQuiz,
+  getMyQuizAttempts,
 } = require("../controllers/quiz.controller");
 
 // Teacher creates quiz
@@ -23,6 +24,13 @@ router.get(
   "/course/:courseId",
   protect,
   getQuizByCourse
+);
+
+router.get(
+  "/course/:courseId/attempts/me",
+  protect,
+  authorizeRoles("student"),
+  getMyQuizAttempts
 );
 
 // Student submits quiz
